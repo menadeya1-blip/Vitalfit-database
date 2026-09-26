@@ -8,7 +8,7 @@ VitalFit es una plataforma tecnológica interactiva en formato de aplicación (S
 - Isai (Frontend - Interactividad y Lógica con JavaScript)
 
 ## Tecnologías
-- **Backend:** Java / Node.js con SQL Server / MySQL (Bases de datos y Endpoints).
+- **Backend:** Java / Intellij con SQL Server / MySQL (Bases de datos y Endpoints).
 - **Frontend:** HTML5, CSS3 (Diseño responsivo Mobile-First) y JavaScript.
 - **Control de Versiones:** Git y GitHub.
 - **Metodología:** Scrum (Organizado en Sprints de 1 semana).
