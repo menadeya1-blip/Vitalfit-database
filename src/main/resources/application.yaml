@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: vitalfit-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vitalfit_db
+    username: postgres
+    password: tu_contraseña_de_postgres # Reemplaza esto con tu contraseña real de PostgreSQL
+
+  jpa:
+    # Cambia a "update" para que Spring cree las tablas solito la primera vez
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
