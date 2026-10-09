@@ -1,0 +1,212 @@
+/* ==========================================
+   ESTILOS CATÁLOGO DE EJERCICIOS TIPO NETFLIX
+   ========================================== */
+:root {
+  --primary-color: #e50914;
+  --bg-dark: #141414;
+  --card-bg: #181818;
+  --text-main: #ffffff;
+  --text-muted: #aaaaaa;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body.netflix-catalog-bg {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+/* NAVBAR */
+.navbar-netflix {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 4%;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-netflix .logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.navbar-netflix .logo span {
+  color: var(--primary-color);
+}
+
+.nav-menu {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-menu a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+  color: var(--text-main);
+}
+
+.user-avatar {
+  background-color: var(--primary-color);
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* CAROUSEL / FILAS */
+.catalog-container {
+  padding: 20px 4%;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.row-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.cards-scroll-container {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scroll-behavior: smooth;
+}
+
+/* Ocultar barra de scroll para vista limpia */
+.cards-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* TARJETAS TIPO NETFLIX CON EFECTO HOVER */
+.exercise-card {
+  min-width: 250px;
+  max-width: 250px;
+  background-color: var(--card-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.exercise-card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  z-index: 10;
+}
+
+.card-image {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding: 10px;
+}
+
+.badge-difficulty {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 3px;
+  color: white;
+  text-transform: uppercase;
+}
+
+.badge-difficulty.beginner { background-color: #2ed573; }
+.badge-difficulty.intermediate { background-color: #ffa502; }
+.badge-difficulty.advanced { background-color: var(--primary-color); }
+
+.card-details {
+  padding: 15px;
+}
+
+.card-details h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.stats {
+  font-size: 0.8rem;
+  color: #2ed573;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-play {
+  flex: 1;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-play:hover {
+  background-color: #cccccc;
+}
+
+.btn-add {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  width: 30px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-add:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* RESPONSIVO */
+@media (max-width: 600px) {
+  .nav-menu { display: none; }
+  .exercise-card {
+    min-width: 200px;
+    max-width: 200px;
+  }
+}
