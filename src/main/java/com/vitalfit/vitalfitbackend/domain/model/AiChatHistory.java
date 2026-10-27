@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ai_chat_histories")
+@Table(name = "ai_chat_history")
 public class AiChatHistory {
 
     @Id

@@ -5,17 +5,15 @@ spring:
   application:
     name: vitalfit-backend
 
+  # XAMPP: MySQL/MariaDB en localhost:3306, base creada con 01_schema.sql
   datasource:
-    url: jdbc:postgresql://localhost:5432/vitalfit_db
-    username: postgres
-    password: tu_contraseña_de_postgres # Reemplaza esto con tu contraseña real de PostgreSQL
+    url: jdbc:mysql://localhost:3306/fitvital_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Bogota
+    username: root
+    password: ${DB_PASSWORD:}
 
   jpa:
-    # Cambia a "update" para que Spring cree las tablas solito la primera vez
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+      # El esquema lo crea 01_schema.sql. Hibernate solo VALIDA que las entidades coincidan.
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false

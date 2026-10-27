@@ -79,7 +79,7 @@ public class Membership {
     }
 
     public boolean isActive() {
-        return "Active".equalsIgnoreCase(this.status) &&
+        return "ACTIVE".equalsIgnoreCase(this.status) &&
                 (this.expirationDate != null && LocalDate.now().isBefore(this.expirationDate));
     }
 }
