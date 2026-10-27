@@ -1,212 +1,145 @@
-/* ==========================================
-   ESTILOS CATÁLOGO DE EJERCICIOS TIPO NETFLIX
-   ========================================== */
+/* VitalFit - Catálogo de ejercicios, paleta verde y blanco
+   Contraste: texto #111827 / #374151 sobre blanco; blanco sobre #166534.
+   Badges: texto oscuro sobre fondo claro (>= 7:1). */
+
 :root {
-  --primary-color: #e50914;
-  --bg-dark: #141414;
-  --card-bg: #181818;
-  --text-main: #ffffff;
-  --text-muted: #aaaaaa;
+  --verde-oscuro: #166534;
+  --verde-hover: #14532d;
+  --verde: #16a34a;
+  --verde-claro: #dcfce7;
+  --fondo: #f0fdf4;
+  --blanco: #ffffff;
+  --texto: #111827;
+  --texto-suave: #374151;
+  --borde: #d1d5db;
+  --foco: #166534;
 }
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+body {
   margin: 0;
-  padding: 0;
+  font-family: 'Poppins', system-ui, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.5;
 }
 
-body.netflix-catalog-bg {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  min-height: 100vh;
-  padding-bottom: 50px;
-}
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
 
-/* NAVBAR */
+.skip-link {
+  position: absolute; left: 16px; top: -48px;
+  background: var(--verde-oscuro); color: var(--blanco);
+  padding: 8px 12px; border-radius: 6px; z-index: 100;
+}
+.skip-link:focus { top: 8px; }
+
 .navbar-netflix {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 18px 4%;
-  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--verde-oscuro);
+  color: var(--blanco);
 }
+.logo { font-weight: 800; font-size: 1.4rem; }
+.logo span { color: var(--verde-claro); }
 
-.navbar-netflix .logo {
-  font-size: 1.8rem;
-  font-weight: 800;
-}
-
-.navbar-netflix .logo span {
-  color: var(--primary-color);
-}
-
-.nav-menu {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-menu a {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.3s;
-}
-
-.nav-menu a:hover,
-.nav-menu a.active {
-  color: var(--text-main);
-}
+.nav-menu { display: flex; gap: 16px; }
+.nav-menu a { color: var(--blanco); text-decoration: none; font-weight: 600; padding: 4px 2px; }
+.nav-menu a.active, .nav-menu a:hover { text-decoration: underline; }
 
 .user-avatar {
-  background-color: var(--primary-color);
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  font-weight: 700;
-  font-size: 0.85rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--blanco); color: var(--verde-oscuro);
+  font-weight: 800; text-decoration: none;
 }
 
-/* CAROUSEL / FILAS */
-.catalog-container {
-  padding: 20px 4%;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
+.catalog-container { padding: 16px 24px 48px; }
 
-.row-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
+.netflix-row { margin-bottom: 36px; }
+.row-title { font-size: 1.3rem; color: var(--verde-oscuro); margin: 0 0 12px; }
 
 .cards-scroll-container {
   display: flex;
-  gap: 15px;
+  gap: 16px;
   overflow-x: auto;
-  padding: 10px 0;
-  scroll-behavior: smooth;
+  padding: 8px 4px 16px;
+  scroll-snap-type: x mandatory;
 }
 
-/* Ocultar barra de scroll para vista limpia */
-.cards-scroll-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* TARJETAS TIPO NETFLIX CON EFECTO HOVER */
 .exercise-card {
-  min-width: 250px;
-  max-width: 250px;
-  background-color: var(--card-bg);
-  border-radius: 6px;
+  flex: 0 0 260px;
+  scroll-snap-align: start;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.exercise-card:hover {
-  transform: scale(1.08);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
-  z-index: 10;
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.08);
 }
 
 .card-image {
-  height: 140px;
+  position: relative;
+  height: 150px;
   background-size: cover;
   background-position: center;
-  position: relative;
-  padding: 10px;
+  background-color: var(--verde-claro);
 }
 
 .badge-difficulty {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 3px;
-  color: white;
-  text-transform: uppercase;
-}
-
-.badge-difficulty.beginner { background-color: #2ed573; }
-.badge-difficulty.intermediate { background-color: #ffa502; }
-.badge-difficulty.advanced { background-color: var(--primary-color); }
-
-.card-details {
-  padding: 15px;
-}
-
-.card-details h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.meta-info {
-  display: flex;
-  justify-content: space-between;
+  position: absolute;
+  top: 10px; left: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
   font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-bottom: 6px;
+  font-weight: 700;
 }
+.badge-difficulty.beginner { background: var(--verde-claro); color: var(--verde-hover); }
+.badge-difficulty.intermediate { background: #fef9c3; color: #713f12; }
+.badge-difficulty.advanced { background: #fee2e2; color: #7f1d1d; }
 
-.stats {
-  font-size: 0.8rem;
-  color: #2ed573;
-  font-weight: 600;
-  margin-bottom: 12px;
+.card-details { padding: 14px 16px 16px; }
+.card-details h3 { margin: 0 0 6px; font-size: 1.05rem; color: var(--texto); }
+
+.meta-info { display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.875rem; color: var(--texto-suave); }
+.meta-info .target { font-weight: 600; }
+
+.stats { margin: 8px 0 12px; color: var(--texto); font-weight: 600; }
+
+.card-actions { display: flex; gap: 8px; }
+
+.btn-play, .btn-add {
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 8px;
 }
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-}
-
 .btn-play {
   flex: 1;
-  background-color: #ffffff;
-  color: #000000;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 10px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
+  padding: 10px 12px;
+  background: var(--verde-oscuro);
+  color: var(--blanco);
+  border: 2px solid var(--verde-oscuro);
 }
-
-.btn-play:hover {
-  background-color: #cccccc;
-}
-
+.btn-play:hover { background: var(--verde-hover); }
 .btn-add {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  width: 30px;
-  border-radius: 50%;
-  font-size: 1rem;
-  cursor: pointer;
+  width: 44px;
+  background: var(--blanco);
+  color: var(--verde-oscuro);
+  border: 2px solid var(--verde-oscuro);
+  font-size: 1.2rem;
 }
+.btn-add:hover { background: var(--verde-claro); }
 
-.btn-add:hover {
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-/* RESPONSIVO */
 @media (max-width: 600px) {
-  .nav-menu { display: none; }
-  .exercise-card {
-    min-width: 200px;
-    max-width: 200px;
-  }
+  .navbar-netflix { padding: 12px 16px; }
+  .catalog-container { padding: 12px 16px 32px; }
+  .exercise-card { flex-basis: 78vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cards-scroll-container { scroll-behavior: auto; }
 }

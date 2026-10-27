@@ -1,59 +1,50 @@
-const loginForm = document.getElementById('loginForm');
-const btnlogin = document.getElementById('btnlogin');
-const spinnerTextlogin = document.getElementById('spinnerTextlogin');
-const spinnerLoadingLogin = document.getElementById('spinnerLoadingLogin');
-const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+// Inicio de sesión (index.html). Usa VitalfitApi (api.js) y la vista de main.js.
+(function () {
+  'use strict';
 
-if(loginForm){
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+  const SESSION_KEY = 'vitalfit_user_id';
 
-        if (mensajeErrorLogin) mensajeErrorLogin.style.display = 'none';
-        if('btnlogin') btnlogin.disabled = true;
-        if(spinnerTextlogin) spinnerTextlogin.textContent = 'Iniciando...';
-        if(spinnerLoadingLogin)spinnerLoadingLogin.style.display = 'inline-block';
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('loginForm');
+    const msg = document.getElementById('loginMensaje');
+    const boton = document.getElementById('btnLogin');
+    const spinner = document.getElementById('loginSpinner');
+    const texto = document.getElementById('loginTexto');
 
-        const formData = new FormData(loginForm);
-        const params = new URLSearchParams(formData);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.hidden = true;
+      if (!form.reportValidity()) return;
 
-        try {
-            const response = await fetch('/vitalfit/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type':
-                    'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                body: params.toString()
-            });
+      boton.disabled = true;
+      spinner.hidden = false;
+      texto.textContent = 'Iniciando...';
 
-            const data = await response.json();
-            if(response.ok && data.success) {
-                loginForm.reset();
-               //redirigir al dashboard o vista principal tras login existoso
-                window.location.href = data.redirectUrl || 'ejercicio.html';
-            }
-            else{
-                //mostrar mesajes si las credenciales fallan cod 401
-                alert(data.message || 'Credenciales invalidas.');
-                if (mensajeErrorLogin){
-                    mensajeErrorLogin.textContent = data.message|| 'Correo o contraseña invalidos.';
-                    mensajeErrorLogin.style.display = 'block';
-                }else{
-                    alert(data.message||'Correo o contraseña invalidos.');
-                    loginForm.reset();
-                    restaurarBotonLogin();
-                }
-            }
-        }catch(error){
-            console.error('Error en el login: ', error);
-            alert('Error de conexión con el servidor.');
-            restaurarBotonLogin();
+      try {
+        const usuario = await window.VitalfitApi.login({
+          email: document.getElementById('login_email').value.trim(),
+          password: document.getElementById('login_password').value
+        });
+        sessionStorage.setItem(SESSION_KEY, String(usuario.id));
+
+        if (!usuario.fitnessGoal) {
+          // Cuenta sin onboarding terminado: completar el paso 2
+          window.VitalfitUI.mostrarOnboarding(usuario.id);
+        } else {
+          window.location.href = 'ejercicio.html';
         }
+      } catch (err) {
+        if (err.status === 403) {
+          window.VitalfitUI.mostrarPendiente();
+        } else {
+          msg.textContent = err.message;
+          msg.hidden = false;
+        }
+      } finally {
+        boton.disabled = false;
+        spinner.hidden = true;
+        texto.textContent = 'Iniciar sesión';
+      }
     });
-}
-
-function restaurarBotonLogin(){
-    if(btnlogin) btnlogin.disabled = false;
-    if(spinnerTextlogin) spinnerTextlogin.textContent = 'Iniciar sesión';
-    if (spinnerLoadingLogin) spinnerLoadingLogin.style.display = 'none';
-}
+  });
+})();

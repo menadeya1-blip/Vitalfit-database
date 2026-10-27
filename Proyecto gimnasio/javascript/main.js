@@ -1,93 +1,127 @@
-//Script para alternar entre Login y Registro
- 
-    const loginBox = document.getElementById('login-container');
-    const registerBox = document.getElementById('register-container');
-    const btnShowRegister = document.getElementById('btn-show-register');
-    const btnShowLogin = document.getElementById('btn-show-login');
+// Interfaz de index.html: cambio entre vistas, registro (paso 1), onboarding (paso 2) y aviso de cookies.
+(function () {
+  'use strict';
 
-    btnShowRegister.addEventListener('click', () => {
-      loginBox.classList.add('hidden');
-      registerBox.classList.remove('hidden')
+  const SESSION_KEY = 'vitalfit_user_id';
+  const COOKIE_KEY = 'vitalfit_cookies_ack';
+  const VISTAS = ['login-container', 'register-container', 'onboarding-container', 'pending-container'];
+
+  const $ = (id) => document.getElementById(id);
+
+  function mostrarVista(id) {
+    VISTAS.forEach((v) => { $(v).hidden = v !== id; });
+    const titulo = $(id).querySelector('h1');
+    if (titulo) { titulo.tabIndex = -1; titulo.focus(); }
+  }
+
+  function mensaje(el, texto, tipo) {
+    el.textContent = texto || '';
+    el.className = 'mensaje ' + (tipo || 'error');
+    el.hidden = !texto;
+  }
+
+  function ocupado(boton, spinner, textoEl, activo, textoActivo, textoNormal) {
+    boton.disabled = activo;
+    spinner.hidden = !activo;
+    textoEl.textContent = activo ? textoActivo : textoNormal;
+  }
+
+  // Expuesto para app.js (login) cuando el usuario aún no completó el onboarding
+  window.VitalfitUI = {
+    mostrarOnboarding(userId) {
+      sessionStorage.setItem(SESSION_KEY, String(userId));
+      mostrarVista('onboarding-container');
+    },
+    mostrarPendiente() { mostrarVista('pending-container'); },
+    mostrarLogin() { mostrarVista('login-container'); }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Navegación entre vistas
+    $('btn-show-register').addEventListener('click', () => mostrarVista('register-container'));
+    $('btn-show-login').addEventListener('click', () => mostrarVista('login-container'));
+    $('btn-pending-login').addEventListener('click', () => mostrarVista('login-container'));
+
+    // Enlaces legales: todavía no existen las páginas (pendientes de revisión legal)
+    ['linkTerminos', 'linkPrivacidad', 'linkCookies'].forEach((id) => {
+      $(id).addEventListener('click', (e) => { e.preventDefault(); });
     });
 
-    btnShowLogin.addEventListener('click', () => {
-      registerBox.classList.add('hidden');
-      loginBox.classList.remove('hidden')
-    });
+    // Paso 1: registro
+    $('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = $('registerMensaje');
+      mensaje(msg, '');
+      if (!e.target.reportValidity()) return;
 
-//Se realiza un FETCH para hacer una peticion al backend
+      const datos = {
+        fullName: $('fullName').value.trim(),
+        email: $('register_email').value.trim(),
+        password: $('register_password').value,
+        birthDate: $('birthDate').value,
+        acceptedTerms: $('acceptTerms').checked,
+        acceptedPrivacy: $('acceptPrivacy').checked
+      };
 
-document.addEventListener('DOMContentLoaded', () => {
-  const registerForm = document.getElementById('registerForm');
-  
-
-  //captura de los elementos de spinner y mensajes
-      const btnRegistro = document.getElementById('btnRegistro');
-      const spinnerText = document.getElementById('spinnerText');
-      const spinnerLoading = document.getElementById('spinnerLoading');
-      const mensajeExito = document.getElementById('mensajeExito');
-
-  if (registerForm) {
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Evita que la página se recargue automáticamente
-
-      //mostrar spinner y desactivar boton antes de enviar peticion
-      if(btnRegistro) btnRegistro.disabled = true;
-      if(spinnerText) spinnerText.textContent = 'Procesando...';
-      if(spinnerLoading) spinnerLoading.style.display = 'inline-block';
-      if(mensajeExito) mensajeExito.style.display = 'none';
-
-      // Capturar los datos del formulario
-      const formData = new FormData(registerForm);
-      const params = new URLSearchParams(formData);
-
+      ocupado($('btnRegistro'), $('registroSpinner'), $('registroTexto'), true, 'Creando cuenta...', 'Crear cuenta');
       try {
-        // Enviar la petición POST al Servlet en la ruta '/register'
-        const response = await fetch('register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-          },
-          body: params.toString()
-        });
-
-        //Apagar el spinner cuando el servidor ya respondio
-        if(spinnerLoading) spinnerLoading.style.display = 'none';
-  
-        if (response.ok) {
-          //si responde cod 200 ok
-          if(mensajeExito) mensajeExito.style.display = 'block';
-          if(spinnerText) spinnerText.textContent = '¡Registro exitoso!'
-          setTimeout(() => {
-            window.location.href = 'index.html';
-          }, 4000);
-        } else if (response.status === 409) {
-            //1. obtener y mostrar el msj del backend
-            const errorMSj = await response.text();
-            alert(errorMSj || 'El correo electrónico ya esta regsitrado.');
-            //2. apagar el spinner y activar el btn
-            if(spinnerLoading) spinnerLoading.style.display = 'none';
-            if(btnRegistro) btnRegistro.disabled = false;
-            if(spinnerText) spinnerText.textContent = "Resgistrarme e Iniciar onboarding";
-
-            //3. Limpiar los campos del formulario
-            registerForm.reset();
-            loginForm.reset();
+        const usuario = await window.VitalfitApi.register(datos);
+        e.target.reset();
+        if (usuario.parentalConsentPending) {
+          mostrarVista('pending-container');
         } else {
-          alert('Error al registrar el usuario. Revisa los datos.');
-          //reactivar el boton para poder corregir
-          if(btnRegistro) btnRegistro.disabled = false;
-          if(spinnerText) spinnerText.textContent = 'Registrarme e Iniciar onboarding';
+          window.VitalfitUI.mostrarOnboarding(usuario.id);
         }
-      } catch (error) {
-        console.error('Error de red o conexión con el servidor:', error);
-        alert('No se pudo conectar con el servidor.');
-
-        //en caso de fallo de conexion, restaurar boton
-        if(spinnerLoading) spinnerLoading.style.display = 'none';
-        if(btnRegistro) btnRegistro.disabled = 'false';
-        if(spinnerText) spinnerText.textContent = 'Registrarme e Iniciar onboarding';
+      } catch (err) {
+        if (err.status === 409) {
+          mensaje(msg, 'Ese correo ya está registrado. ¿Quieres iniciar sesión?');
+        } else {
+          mensaje(msg, err.message);
+        }
+      } finally {
+        ocupado($('btnRegistro'), $('registroSpinner'), $('registroTexto'), false, '', 'Crear cuenta');
       }
     });
-  }
-});
+
+    // Paso 2: onboarding
+    $('onboardingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = $('onboardingMensaje');
+      mensaje(msg, '');
+      if (!e.target.reportValidity()) return;
+
+      const userId = sessionStorage.getItem(SESSION_KEY);
+      if (!userId) {
+        mensaje(msg, 'Tu sesión de registro expiró. Inicia sesión para continuar.');
+        mostrarVista('login-container');
+        return;
+      }
+
+      ocupado($('btnOnboarding'), $('onboardingSpinner'), $('onboardingTexto'), true, 'Guardando...', 'Guardar y continuar');
+      try {
+        await window.VitalfitApi.updateOnboarding(userId, {
+          weightKg: Number($('weightKg').value),
+          heightCm: Number($('heightCm').value),
+          fitnessGoal: $('fitnessGoal').value
+        });
+        window.location.href = 'ejercicio.html';
+      } catch (err) {
+        mensaje(msg, err.message);
+      } finally {
+        ocupado($('btnOnboarding'), $('onboardingSpinner'), $('onboardingTexto'), false, '', 'Guardar y continuar');
+      }
+    });
+
+    // Aviso de cookies: se recuerda la aceptación en este navegador (dato técnico, no personal)
+    const banner = $('cookie-banner');
+    try {
+      banner.hidden = localStorage.getItem(COOKIE_KEY) === 'si';
+    } catch (_) {
+      banner.hidden = false;
+    }
+    $('btn-cookie-ok').addEventListener('click', () => {
+      try { localStorage.setItem(COOKIE_KEY, 'si'); } catch (_) { /* navegador sin almacenamiento */ }
+      banner.hidden = true;
+    });
+  });
+})();

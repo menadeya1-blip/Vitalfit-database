@@ -1,239 +1,202 @@
-/* ==========================================
-   ESTILOS TIPO NETFLIX (VITALFIT)
-   ========================================== */
+/* VitalFit - Paleta verde y blanco
+   Contraste verificado (WCAG AA):
+   texto #111827 sobre blanco 17.7:1 | #166534 sobre blanco 7.1:1 | blanco sobre #166534 7.1:1
+   #b91c1c (error) sobre blanco 6.5:1
+   #16a34a se usa solo en decoraciones, nunca como color de texto sobre blanco (3.3:1, no cumple WCAG AA). */
+
 :root {
-  --primary-color: #1cf308; 
-  --primary-hover: #b80710; /* Rojo estilo Netflix/Fitness */
-  --bg-dark: #141414;
-  --card-bg: rgba(0, 0, 0, 0.75);
-  --input-bg: #333333;
-  --text-main: #ffffff;
-  --text-muted: #8c8c8c;
-  --radius: 8px;
+  --verde-oscuro: #166534;
+  --verde-hover: #14532d;
+  --verde: #16a34a;
+  --verde-claro: #dcfce7;
+  --fondo: #f0fdf4;
+  --blanco: #ffffff;
+  --texto: #111827;
+  --texto-suave: #374151;
+  --borde: #d1d5db;
+  --error: #b91c1c;
+  --foco: #166534;
 }
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+body {
   margin: 0;
-  padding: 0;
-}
-
-body.netflix-bg {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
-              url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat fixed;
-  color: var(--text-main);
+  font-family: 'Poppins', system-ui, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  line-height: 1.5;
 }
 
-/* NAVBAR */
-.navbar-netflix {
-  padding: 25px 50px;
+/* Accesibilidad: foco visible con teclado */
+:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
 }
 
-.navbar-netflix .logo {
-  font-size: 2rem;
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  background: var(--verde-oscuro);
+  color: var(--blanco);
+  padding: 8px 12px;
+  border-radius: 6px;
+  z-index: 100;
+}
+.skip-link:focus { top: 8px; }
+
+.navbar {
+  background: var(--verde-oscuro);
+  color: var(--blanco);
+  padding: 16px 24px;
+}
+.logo {
   font-weight: 800;
-  letter-spacing: 1px;
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
 }
+.logo span { color: var(--verde-claro); }
 
-.navbar-netflix .logo span {
-  color: var(--primary-hover);
-}
-
-/* CONTENEDOR CENTRAL */
 .auth-container {
-  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
+  padding: 24px 16px;
 }
 
-.netflix-card {
-  background-color: var(--card-bg);
-  padding: 50px 45px;
+.auth-card {
+  background: var(--blanco);
   width: 100%;
-  max-width: 450px;
-  border-radius: var(--radius);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+  max-width: 460px;
+  padding: 32px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--borde);
+  box-shadow: 0 8px 24px rgba(22, 101, 52, 0.08);
 }
 
-.auth-box h2 {
-  font-size: 2rem;
-  font-weight: 700;
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 8px;
+  color: var(--verde-oscuro);
+}
+.subtitle { color: var(--texto-suave); margin: 0 0 20px; }
+
+.auth-box[hidden] { display: none; }
+
+.form-group { margin-bottom: 16px; }
+label, .label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--texto); }
+.help { font-size: 0.875rem; color: var(--texto-suave); margin: 4px 0 0; }
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--texto);
+  background: var(--blanco);
+  border: 1px solid #6b7280;
+  border-radius: 8px;
+}
+input:focus, select:focus { border-color: var(--verde-oscuro); }
+
+.consents { border: 0; padding: 0; margin: 8px 0 16px; }
+.consents legend { font-weight: 700; margin-bottom: 8px; color: var(--texto); }
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
   margin-bottom: 10px;
+  color: var(--texto);
 }
+.check input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--verde-oscuro); }
+.check a { color: var(--verde-oscuro); font-weight: 600; }
 
-.auth-box .subtitle {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  margin-bottom: 20px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* FORMULARIOS */
-.form-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 15px;
-}
-
-.full-width {
-  grid-column: span 2;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.form-group input,
-.form-group select {
-  background: var(--input-bg);
-  border: none;
-  border-radius: 4px;
-  color: white;
-  padding: 14px 16px;
-  font-size: 0.95rem;
-  outline: none;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  background: #454545;
-}
-/* Estilo para el mensaje de exito*/
-.mensaje-exito {
-  grid-column: 1 / -1;/*se obliga a ocupar todo el espacio*/
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #22c55e; /*verde de exito*/
-  color: #ffffff;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  text-align: center;
-  font-weight: bold;
-}
-
-/*Spinner dentro del boton*/
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: #ffffff;
-  animation: spin 0.8s linear infinite;
-  margin-left: 8px;
-  vertical-align: middle;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* BOTONES */
 .btn {
-  border: none;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  padding: 14px;
-  font-size: 1rem;
-}
-
-.btn-primary {
-  background-color: var(--primary-hover);
-  color: whitesmoke;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-color);
-  color: rgb(20, 19, 19);
-}
-
-.btn-full {
-  width: 100%;
-}
-
-/* ACCIONES ADICIONALES TIPO NETFLIX */
-.form-actions-netflix {
-  display: flex;
-  justify-content: space-between;
+  display: inline-flex;
   align-items: center;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.switch-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font: inherit;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 2px solid transparent;
   cursor: pointer;
 }
-
-.help-link {
-  color: var(--text-muted);
-  text-decoration: none;
-}
-
-.help-link:hover {
-  text-decoration: underline;
-}
-
-/* ALTERNADOR REGISTRO / LOGIN */
-.switch-auth-mode {
-  margin-top: 30px;
-  font-size: 0.95rem;
-  color: var(--text-muted);
-}
+.btn-primary { background: var(--verde-oscuro); color: var(--blanco); }
+.btn-primary:hover { background: var(--verde-hover); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-outline { background: var(--blanco); color: var(--verde-oscuro); border-color: var(--verde-oscuro); }
+.btn-outline:hover { background: var(--verde-claro); }
+.btn-full { width: 100%; }
 
 .btn-text-action {
   background: none;
   border: none;
-  color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.95rem;
   padding: 0;
-  margin-left: 5px;
-}
-
-.btn-text-action:hover {
+  font: inherit;
+  font-weight: 700;
+  color: var(--verde-oscuro);
   text-decoration: underline;
+  cursor: pointer;
 }
 
-/* RESPONSIVO */
-@media (max-width: 500px) {
-  .netflix-card {
-    padding: 30px 20px;
-  }
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  .full-width {
-    grid-column: span 1;
-  }
+.switch-auth-mode { margin-top: 20px; text-align: center; color: var(--texto-suave); }
+
+.mensaje {
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+.mensaje[hidden] { display: none; }
+.mensaje.error { background: #fef2f2; color: var(--error); border: 1px solid var(--error); }
+.mensaje.ok { background: var(--verde-claro); color: var(--verde-hover); border: 1px solid var(--verde); }
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top-color: var(--blanco);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+.spinner[hidden] { display: none; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+}
+
+/* Banner de cookies: solo informa; no usamos cookies opcionales */
+.cookie-banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--blanco);
+  color: var(--texto);
+  border: 1px solid var(--verde-oscuro);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.cookie-banner[hidden] { display: none; }
+.cookie-banner p { margin: 0; flex: 1 1 280px; }
+.cookie-banner a { color: var(--verde-oscuro); font-weight: 600; }
+
+@media (max-width: 480px) {
+  .auth-card { padding: 24px 16px; }
 }
