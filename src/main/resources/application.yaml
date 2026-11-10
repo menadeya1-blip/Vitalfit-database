@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: vitalfit-backend
+
+  # XAMPP: MySQL/MariaDB en localhost:3306, base creada con 01_schema.sql
+  datasource:
+    url: jdbc:mysql://localhost:3306/fitvital_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Bogota
+    username: root
+    password: ${DB_PASSWORD:}
+
+  jpa:
+    hibernate:
+      # El esquema lo crea 01_schema.sql. Hibernate solo VALIDA que las entidades coincidan.
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
