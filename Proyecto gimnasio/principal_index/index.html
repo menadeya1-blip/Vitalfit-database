@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VitalFit - Iniciar sesión y registro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+  <!-- Orden importante: api.js primero (lo usan main.js y app.js) -->
+  <script src="../javascript/api.js" defer></script>
+  <script src="../javascript/main.js" defer></script>
+  <script src="../javascript/app.js" defer></script>
+</head>
+<body>
+
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="navbar">
+    <div class="logo"><span aria-hidden="true">⚡</span> VITAL<span>FIT</span></div>
+  </header>
+
+  <main id="contenido" class="auth-container">
+    <section class="auth-card" aria-live="polite">
+
+      <!-- LOGIN -->
+      <div id="login-container" class="auth-box">
+        <h1>Inicia sesión</h1>
+        <div id="loginMensaje" class="mensaje error" role="alert" hidden></div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="login_email">Correo electrónico</label>
+            <input type="email" id="login_email" name="email" autocomplete="username" required>
+          </div>
+
+          <div class="form-group">
+            <label for="login_password">Contraseña</label>
+            <input type="password" id="login_password" name="password" autocomplete="current-password" required>
+          </div>
+
+          <button type="submit" id="btnLogin" class="btn btn-primary btn-full">
+            <span id="loginTexto">Iniciar sesión</span>
+            <span id="loginSpinner" class="spinner" hidden aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <p class="switch-auth-mode">
+          ¿Primera vez en VitalFit?
+          <button type="button" id="btn-show-register" class="btn-text-action">Regístrate</button>
+        </p>
+      </div>
+
+      <!-- REGISTRO (paso 1) -->
+      <div id="register-container" class="auth-box" hidden>
+        <h1>Crea tu cuenta</h1>
+        <p class="subtitle">Paso 1 de 2</p>
+        <div id="registerMensaje" class="mensaje error" role="alert" hidden></div>
+
+        <form id="registerForm" novalidate>
+          <div class="form-group">
+            <label for="fullName">Nombre completo</label>
+            <input type="text" id="fullName" name="fullName" autocomplete="name" maxlength="100" required>
+          </div>
+
+          <div class="form-group">
+            <label for="register_email">Correo electrónico</label>
+            <input type="email" id="register_email" name="email" autocomplete="email" maxlength="100" required>
+          </div>
+
+          <div class="form-group">
+            <label for="register_password">Contraseña</label>
+            <input type="password" id="register_password" name="password" autocomplete="new-password" minlength="8" maxlength="72" aria-describedby="passwordAyuda" required>
+            <p id="passwordAyuda" class="help">Mínimo 8 caracteres.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="birthDate">Fecha de nacimiento</label>
+            <input type="date" id="birthDate" name="birthDate" autocomplete="bday" required>
+            <p class="help">La usamos solo para verificar tu edad.</p>
+          </div>
+
+          <fieldset class="consents">
+            <legend>Consentimientos</legend>
+            <label class="check">
+              <input type="checkbox" id="acceptTerms" name="acceptedTerms" required>
+              <span>Acepto los <a href="#" id="linkTerminos">Términos y condiciones</a>.</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="acceptPrivacy" name="acceptedPrivacy" required>
+              <span>Acepto la <a href="#" id="linkPrivacidad">Política de privacidad</a>.</span>
+            </label>
+          </fieldset>
+
+          <button type="submit" id="btnRegistro" class="btn btn-primary btn-full">
+            <span id="registroTexto">Crear cuenta</span>
+            <span id="registroSpinner" class="spinner" hidden aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <p class="switch-auth-mode">
+          ¿Ya tienes cuenta?
+          <button type="button" id="btn-show-login" class="btn-text-action">Inicia sesión</button>
+        </p>
+      </div>
+
+      <!-- ONBOARDING (paso 2) -->
+      <div id="onboarding-container" class="auth-box" hidden>
+        <h1>Tu perfil de entrenamiento</h1>
+        <p class="subtitle">Paso 2 de 2. Con estos datos calculamos tus metas.</p>
+        <div id="onboardingMensaje" class="mensaje error" role="alert" hidden></div>
+
+        <form id="onboardingForm" novalidate>
+          <div class="form-group">
+            <label for="weightKg">Peso (kg)</label>
+            <input type="number" id="weightKg" name="weightKg" step="0.1" min="20" max="400" required>
+          </div>
+
+          <div class="form-group">
+            <label for="heightCm">Estatura (cm)</label>
+            <input type="number" id="heightCm" name="heightCm" step="1" min="50" max="250" required>
+          </div>
+
+          <div class="form-group">
+            <label for="fitnessGoal">Objetivo</label>
+            <select id="fitnessGoal" name="fitnessGoal" required>
+              <option value="">Selecciona una opción</option>
+              <option value="GANANCIA_MUSCULAR">Ganancia muscular</option>
+              <option value="PERDIDA_GRASA">Pérdida de grasa</option>
+              <option value="RESISTENCIA">Resistencia y cardio</option>
+            </select>
+          </div>
+
+          <button type="submit" id="btnOnboarding" class="btn btn-primary btn-full">
+            <span id="onboardingTexto">Guardar y continuar</span>
+            <span id="onboardingSpinner" class="spinner" hidden aria-hidden="true"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- MENOR DE EDAD: consentimiento parental pendiente -->
+      <div id="pending-container" class="auth-box" hidden>
+        <h1>Autorización pendiente</h1>
+        <p>Como eres menor de 18 años, tu padre, madre o tutor debe autorizar tu cuenta antes de que puedas usarla.</p>
+        <p class="switch-auth-mode"><button type="button" id="btn-pending-login" class="btn-text-action">Volver a iniciar sesión</button></p>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Aviso de cookies: la app solo usa cookies/almacenamiento necesarios -->
+  <div id="cookie-banner" class="cookie-banner" role="region" aria-label="Aviso de cookies" hidden>
+    <p>Usamos solo almacenamiento necesario para que la app funcione. Consulta nuestra <a href="#" id="linkCookies">política de cookies</a>.</p>
+    <button type="button" id="btn-cookie-ok" class="btn btn-outline">Entendido</button>
+  </div>
+
+</body>
+</html>
