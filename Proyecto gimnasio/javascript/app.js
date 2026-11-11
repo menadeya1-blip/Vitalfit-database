@@ -1,50 +1,50 @@
-// Inicio de sesión (index.html). Usa VitalfitApi (api.js) y la vista de main.js.
-(function () {
-  'use strict';
+/*
+ * VitalFit - modo demostración de frontend.
+ * No realiza peticiones al servidor. Cuando el backend esté listo,
+ * este archivo podrá conectarse al endpoint acordado por el equipo.
+ * IMPORTANTE: este modo NO autentica de forma segura; es solo para pruebas.
+ */
+(() => {
+  // Visitar el inicio equivale a cerrar la sesión de demostración.
+  try { localStorage.removeItem('vitalfit_demo_session'); } catch (err) { /* sin almacenamiento */ }
+  const loginForm = document.getElementById('loginForm');
+  const btnlogin = document.getElementById('btnlogin');
+  const spinnerTextlogin = document.getElementById('spinnerTextlogin');
+  const spinnerLoadingLogin = document.getElementById('spinnerLoadingLogin');
+  const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
 
-  const SESSION_KEY = 'vitalfit_user_id';
+  function restaurarBotonLogin() {
+    if (btnlogin) btnlogin.disabled = false;
+    if (spinnerTextlogin) spinnerTextlogin.textContent = 'Iniciar sesión';
+    if (spinnerLoadingLogin) spinnerLoadingLogin.style.display = 'none';
+  }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('loginForm');
-    const msg = document.getElementById('loginMensaje');
-    const boton = document.getElementById('btnLogin');
-    const spinner = document.getElementById('loginSpinner');
-    const texto = document.getElementById('loginTexto');
-
-    form.addEventListener('submit', async (e) => {
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      msg.hidden = true;
-      if (!form.reportValidity()) return;
+      if (!loginForm.reportValidity()) return;
 
-      boton.disabled = true;
-      spinner.hidden = false;
-      texto.textContent = 'Iniciando...';
-
-      try {
-        const usuario = await window.VitalfitApi.login({
-          email: document.getElementById('login_email').value.trim(),
-          password: document.getElementById('login_password').value
-        });
-        sessionStorage.setItem(SESSION_KEY, String(usuario.id));
-
-        if (!usuario.fitnessGoal) {
-          // Cuenta sin onboarding terminado: completar el paso 2
-          window.VitalfitUI.mostrarOnboarding(usuario.id);
-        } else {
-          window.location.href = 'ejercicio.html';
-        }
-      } catch (err) {
-        if (err.status === 403) {
-          window.VitalfitUI.mostrarPendiente();
-        } else {
-          msg.textContent = err.message;
-          msg.hidden = false;
-        }
-      } finally {
-        boton.disabled = false;
-        spinner.hidden = true;
-        texto.textContent = 'Iniciar sesión';
+      if (mensajeErrorLogin) {
+        mensajeErrorLogin.textContent = '';
+        mensajeErrorLogin.style.display = 'none';
       }
+      if (btnlogin) btnlogin.disabled = true;
+      if (spinnerTextlogin) spinnerTextlogin.textContent = 'Entrando en modo demo...';
+      if (spinnerLoadingLogin) spinnerLoadingLogin.style.display = 'inline-block';
+
+      // Guardamos solo una marca de sesión de demostración en este navegador.
+      const email = (new FormData(loginForm).get('email') || '').toString().trim();
+      try {
+        localStorage.setItem('vitalfit_demo_session', JSON.stringify({ email, demo: true }));
+      } catch (err) {
+        console.warn('No se pudo guardar la sesión de demostración en este navegador.', err);
+      }
+
+      // La página de panel está en la misma carpeta que index.html.
+      window.location.href = 'dashboard.html';
     });
-  });
+  }
+
+  // Al volver al login, limpiar el estado visual del botón.
+  window.addEventListener('pageshow', restaurarBotonLogin);
 })();
