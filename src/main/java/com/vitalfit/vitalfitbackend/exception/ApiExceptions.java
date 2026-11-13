@@ -29,6 +29,18 @@ public final class ApiExceptions {
         }
     }
 
+    public static class SessionNotFoundException extends RuntimeException {
+        public SessionNotFoundException() {
+            super("Sesión de entrenamiento no encontrada.");
+        }
+    }
+
+    public static class ExerciseNotFoundException extends RuntimeException {
+        public ExerciseNotFoundException() {
+            super("Ejercicio no encontrado.");
+        }
+    }
+
     public static class ParentalConsentNotRequiredException extends RuntimeException {
         public ParentalConsentNotRequiredException() {
             super("Esta cuenta no requiere consentimiento parental.");
