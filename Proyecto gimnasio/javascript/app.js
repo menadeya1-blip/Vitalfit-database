@@ -20,28 +20,41 @@
   }
 
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!loginForm.reportValidity()) return;
+
+      const mostrarError = (texto) => {
+        if (!mensajeErrorLogin) return;
+        mensajeErrorLogin.textContent = texto;
+        mensajeErrorLogin.style.display = 'block';
+      };
 
       if (mensajeErrorLogin) {
         mensajeErrorLogin.textContent = '';
         mensajeErrorLogin.style.display = 'none';
       }
       if (btnlogin) btnlogin.disabled = true;
-      if (spinnerTextlogin) spinnerTextlogin.textContent = 'Entrando en modo demo...';
+      if (spinnerTextlogin) spinnerTextlogin.textContent = 'Entrando...';
       if (spinnerLoadingLogin) spinnerLoadingLogin.style.display = 'inline-block';
 
-      // Guardamos solo una marca de sesión de demostración en este navegador.
-      const email = (new FormData(loginForm).get('email') || '').toString().trim();
-      try {
-        localStorage.setItem('vitalfit_demo_session', JSON.stringify({ email, demo: true }));
-      } catch (err) {
-        console.warn('No se pudo guardar la sesión de demostración en este navegador.', err);
-      }
+      // Convierte los campos del formulario al formato que espera LoginRequest
+      const form = new FormData(loginForm);
+      const datos = {
+        email: (form.get('email') || '').toString().trim(),
+        password: form.get('password')
+      };
 
-      // La página de panel está en la misma carpeta que index.html.
-      window.location.href = 'dashboard.html';
+      try {
+        const usuario = await window.VitalfitApi.login(datos);
+        // Guardamos el id del usuario para usarlo en las siguientes pantallas
+        sessionStorage.setItem('vitalfit_user_id', usuario.id);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        // 401: credenciales incorrectas. 403: la cuenta aún requiere consentimiento parental.
+        mostrarError(err.message);
+        restaurarBotonLogin();
+      }
     });
   }
 

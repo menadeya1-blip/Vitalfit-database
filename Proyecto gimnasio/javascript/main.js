@@ -25,45 +25,48 @@
   }
 
   if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!registerForm.reportValidity()) return;
 
-      if (btnRegistro) btnRegistro.disabled = true;
-      if (spinnerText) spinnerText.textContent = 'Guardando prueba...';
-      if (spinnerLoading) spinnerLoading.style.display = 'inline-block';
-      if (mensajeExito) {
-        mensajeExito.textContent = 'Registro de demostración completado en este navegador. No se ha enviado al servidor.';
+      const mostrarMensaje = (texto) => {
+        if (!mensajeExito) return;
+        mensajeExito.textContent = texto;
         mensajeExito.style.display = 'block';
-      }
+      };
 
-      // Solo para probar la interfaz; no reemplaza el registro real del backend.
-      const values = Object.fromEntries(new FormData(registerForm).entries());
+      if (btnRegistro) btnRegistro.disabled = true;
+      if (spinnerText) spinnerText.textContent = 'Creando tu cuenta...';
+      if (spinnerLoading) spinnerLoading.style.display = 'inline-block';
+
+      // Convierte los campos del formulario al formato que espera RegisterRequest
+      const form = new FormData(registerForm);
+      const datos = {
+        fullName: `${form.get('firstName')} ${form.get('lastName')}`.trim(),
+        email: form.get('email'),
+        password: form.get('password'),
+        birthDate: form.get('birthDate'),
+        acceptedTerms: form.get('acceptedTerms') === 'on',
+        acceptedPrivacy: form.get('acceptedPrivacy') === 'on'
+      };
+
       try {
-        const users = JSON.parse(localStorage.getItem('vitalfit_demo_users') || '[]');
-        const exists = users.some(user => user.email && user.email.toLowerCase() === String(values.email || '').toLowerCase());
-        if (exists) {
-          if (mensajeExito) {
-            mensajeExito.textContent = 'Ese correo ya está guardado en los datos de demostración de este navegador.';
-          }
-        } else {
-          users.push({ ...values, password: undefined, demo: true });
-          localStorage.setItem('vitalfit_demo_users', JSON.stringify(users));
-        }
-      } catch (err) {
-        console.warn('No se pudo guardar el registro demo en este navegador.', err);
-      }
-
-      if (spinnerLoading) spinnerLoading.style.display = 'none';
-      if (spinnerText) spinnerText.textContent = 'Registro de demostración listo';
-      window.setTimeout(() => {
+        await window.VitalfitApi.register(datos);
+        mostrarMensaje('Cuenta creada. Ya puedes iniciar sesión.');
         registerForm.reset();
-        if (registerBox) registerBox.classList.add('hidden');
-        if (loginBox) loginBox.classList.remove('hidden');
-        if (btnRegistro) btnRegistro.disabled = false;
+        window.setTimeout(() => {
+          if (registerBox) registerBox.classList.add('hidden');
+          if (loginBox) loginBox.classList.remove('hidden');
+          if (mensajeExito) mensajeExito.style.display = 'none';
+        }, 2000);
+      } catch (err) {
+        // Muestra el mensaje del backend, por ejemplo "correo repetido" (409) o un error de validación (400)
+        mostrarMensaje(err.message);
+      } finally {
+        if (spinnerLoading) spinnerLoading.style.display = 'none';
         if (spinnerText) spinnerText.textContent = 'Crear mi cuenta';
-        if (mensajeExito) mensajeExito.style.display = 'none';
-      }, 2200);
+        if (btnRegistro) btnRegistro.disabled = false;
+      }
     });
   }
 })();
