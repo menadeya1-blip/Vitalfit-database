@@ -145,3 +145,42 @@ CREATE TABLE ai_chat_history (
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT chk_category CHECK (category IN ('NUTRITION', 'TRAINING', 'GENERAL'))
 ) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- workout_sessions: una sesión de entrenamiento de un usuario (PIV-26)
+-- ---------------------------------------------------------------------
+CREATE TABLE workout_sessions (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    routine_id  BIGINT NULL,
+    started_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_sessions_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_sessions_routine
+        FOREIGN KEY (routine_id) REFERENCES routines(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- workout_sets: series de peso y repeticiones por sesión y ejercicio (PIV-26)
+-- ---------------------------------------------------------------------
+CREATE TABLE workout_sets (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    session_id  BIGINT NOT NULL,
+    exercise_id BIGINT NOT NULL,
+    set_number  INT NOT NULL,
+    weight_kg   DECIMAL(6,2) NOT NULL,
+    reps        INT NOT NULL,
+
+    CONSTRAINT fk_sets_session
+        FOREIGN KEY (session_id) REFERENCES workout_sessions(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_sets_exercise
+        FOREIGN KEY (exercise_id) REFERENCES exercises(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT chk_set_number_positive CHECK (set_number > 0),
+    CONSTRAINT chk_weight_non_negative CHECK (weight_kg >= 0),
+    CONSTRAINT chk_reps_positive_sets CHECK (reps > 0)
+) ENGINE=InnoDB;
