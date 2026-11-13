@@ -39,6 +39,7 @@
         } else {
           msg.textContent = err.message;
           msg.hidden = false;
+          msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       } finally {
         boton.disabled = false;

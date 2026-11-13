@@ -18,6 +18,8 @@
     el.textContent = texto || '';
     el.className = 'mensaje ' + (tipo || 'error');
     el.hidden = !texto;
+    // Lleva el mensaje a la vista: si el usuario ya bajó hasta el botón, no lo vería
+    if (texto) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function ocupado(boton, spinner, textoEl, activo, textoActivo, textoNormal) {
