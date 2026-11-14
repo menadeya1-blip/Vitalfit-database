@@ -156,10 +156,58 @@
     return null;
   }
 
+  async function getAccount(userId) {
+    var usuario = leerUsuarios().find(function (u) { return u.id === Number(userId); });
+    if (!usuario) throw errorConEstado(404, 'Usuario no encontrado.');
+    return datosPublicos(usuario);
+  }
+
+  async function updateAccount(userId, body) {
+    var lista = leerUsuarios();
+    var usuario = lista.find(function (u) { return u.id === Number(userId); });
+    if (!usuario) throw errorConEstado(404, 'Usuario no encontrado.');
+
+    var nombre = String(body.fullName || '').trim();
+    if (!nombre) throw errorConEstado(400, 'El nombre es obligatorio.');
+    if (nombre.length > 100) throw errorConEstado(400, 'El nombre no puede tener más de 100 caracteres.');
+
+    var correo = normalizarCorreo(body.email);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) throw errorConEstado(400, 'El correo no es válido.');
+    if (lista.some(function (u) { return u.email === correo && u.id !== usuario.id; })) {
+      throw errorConEstado(409, 'El correo electrónico ya está registrado.');
+    }
+
+    if (!body.birthDate || new Date(body.birthDate + 'T00:00:00') >= new Date()) {
+      throw errorConEstado(400, 'La fecha de nacimiento debe ser una fecha pasada.');
+    }
+
+    var cambiaCorreo = correo !== usuario.email;
+    var cambiaClave = !!body.newPassword;
+    if (cambiaClave && body.newPassword.length < 8) {
+      throw errorConEstado(400, 'La nueva contraseña debe tener al menos 8 caracteres.');
+    }
+    // Para cambiar el correo o la contraseña hay que confirmar la contraseña actual
+    if (cambiaCorreo || cambiaClave) {
+      var hashActual = await cifrar(body.currentPassword || '');
+      if (usuario.passwordHash !== hashActual) {
+        throw errorConEstado(401, 'La contraseña actual no es correcta.');
+      }
+    }
+
+    usuario.fullName = nombre;
+    usuario.email = correo;
+    usuario.birthDate = body.birthDate;
+    if (cambiaClave) usuario.passwordHash = await cifrar(body.newPassword);
+    guardarUsuarios(lista);
+    return datosPublicos(usuario);
+  }
+
   window.VitalfitApi = {
     register: register,
     login: login,
     updateOnboarding: updateOnboarding,
-    deleteAccount: deleteAccount
+    deleteAccount: deleteAccount,
+    getAccount: getAccount,
+    updateAccount: updateAccount
   };
 })();

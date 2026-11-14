@@ -37,6 +37,30 @@
       <p id="perfilUsuario" class="vacio"></p>
     </section>
 
+    <section class="tarjeta" aria-labelledby="t-editar">
+      <h2 id="t-editar">Editar cuenta</h2>
+      <form id="formCuenta" novalidate>
+        <label for="nombre">Nombre completo</label>
+        <input id="nombre" name="nombre" type="text" maxlength="100" required autocomplete="name">
+
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" name="correo" type="email" maxlength="100" required autocomplete="email">
+
+        <label for="nacimiento">Fecha de nacimiento</label>
+        <input id="nacimiento" name="nacimiento" type="date" required>
+
+        <label for="claveActual">Contraseña actual</label>
+        <input id="claveActual" name="currentPassword" type="password" autocomplete="current-password">
+        <p class="help">Escríbela solo si cambias el correo o la contraseña.</p>
+
+        <label for="claveNueva">Nueva contraseña (opcional)</label>
+        <input id="claveNueva" name="newPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="claveAyuda">
+        <p id="claveAyuda" class="help">Mínimo 8 caracteres.</p>
+
+        <button type="submit" class="btn">Guardar cambios</button>
+      </form>
+    </section>
+
     <section class="tarjeta" aria-labelledby="t-datos">
       <h2 id="t-datos">Datos y objetivo</h2>
       <form id="formPerfil" novalidate>
@@ -61,7 +85,22 @@
       <h2 id="t-resumen">Resumen</h2>
       <ul id="perfilResumen" class="lista"></ul>
     </section>
+
+    <section class="tarjeta" aria-labelledby="t-eliminar">
+      <h2 id="t-eliminar">Eliminar cuenta</h2>
+      <p>Se borran tu cuenta y tus datos de este navegador. No se puede deshacer.</p>
+      <form id="formEliminar" novalidate>
+        <label for="eliminarCorreo">Correo electrónico</label>
+        <input id="eliminarCorreo" name="correo" type="email" maxlength="100" required autocomplete="username">
+
+        <label for="eliminarClave">Contraseña</label>
+        <input id="eliminarClave" name="password" type="password" required autocomplete="current-password">
+
+        <button type="submit" class="btn btn-sec">Eliminar mi cuenta</button>
+      </form>
+    </section>
   </main>
+  <script src="../javascript/api.js" defer></script>
   <script src="../javascript/demo.js" defer></script>
 </body>
 </html>

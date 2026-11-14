@@ -211,12 +211,70 @@
   // ---------- Perfil (perfil.html) ----------
   function iniciarPerfil() {
     var usuario = document.getElementById('perfilUsuario');
+    var formCuenta = document.getElementById('formCuenta');
     var form = document.getElementById('formPerfil');
     var resumen = document.getElementById('perfilResumen');
+    var formEliminar = document.getElementById('formEliminar');
 
     var id = null;
     try { id = sessionStorage.getItem('vitalfit_user_id'); } catch (e) { id = null; }
-    usuario.textContent = id ? 'Cuenta #' + id + ' (iniciaste sesión en este navegador).' : 'No hay sesión activa. Inicia sesión para ver tu cuenta.';
+
+    function pintarCuenta(cuenta) {
+      usuario.textContent = cuenta.fullName + ' · ' + cuenta.email;
+      formCuenta.elements.namedItem('nombre').value = cuenta.fullName;
+      formCuenta.elements.namedItem('correo').value = cuenta.email;
+      formCuenta.elements.namedItem('nacimiento').value = cuenta.birthDate;
+    }
+
+    if (id) {
+      window.VitalfitApi.getAccount(id).then(pintarCuenta).catch(function (err) {
+        usuario.textContent = err.message;
+      });
+    } else {
+      usuario.textContent = 'No hay sesión activa. Inicia sesión para editar tu cuenta.';
+      Array.prototype.forEach.call(formCuenta.querySelectorAll('input, button'), function (el) {
+        el.disabled = true;
+      });
+      Array.prototype.forEach.call(formEliminar.querySelectorAll('input, button'), function (el) {
+        el.disabled = true;
+      });
+    }
+
+    formCuenta.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      if (!id) return;
+      var campos = formCuenta.elements;
+      window.VitalfitApi.updateAccount(id, {
+        fullName: campos.namedItem('nombre').value,
+        email: campos.namedItem('correo').value,
+        birthDate: campos.namedItem('nacimiento').value,
+        currentPassword: campos.namedItem('currentPassword').value,
+        newPassword: campos.namedItem('newPassword').value
+      }).then(function (cuenta) {
+        campos.namedItem('currentPassword').value = '';
+        campos.namedItem('newPassword').value = '';
+        pintarCuenta(cuenta);
+        mostrarEstado('Cuenta actualizada.', 'ok');
+      }).catch(function (err) {
+        mostrarEstado(err.message, 'error');
+      });
+    });
+
+    formEliminar.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      if (!id) return;
+      if (!window.confirm('¿Eliminar tu cuenta? Esta acción no se puede deshacer.')) return;
+      var campos = formEliminar.elements;
+      window.VitalfitApi.deleteAccount(id, {
+        email: campos.namedItem('correo').value,
+        password: campos.namedItem('password').value
+      }).then(function () {
+        try { sessionStorage.removeItem('vitalfit_user_id'); } catch (e) { /* sin almacenamiento */ }
+        window.location.href = 'index.html';
+      }).catch(function (err) {
+        mostrarEstado(err.message, 'error');
+      });
+    });
 
     function pintarResumen(datos) {
       resumen.replaceChildren();
@@ -260,7 +318,6 @@
     });
   }
 
-  // ---------- Series (entrenamiento.html) ----------
   function validarSerie(pesoTexto, repsTexto) {
     var peso = Number(pesoTexto);
     var reps = Number(repsTexto);
