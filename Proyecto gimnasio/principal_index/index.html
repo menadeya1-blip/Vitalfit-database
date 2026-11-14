@@ -22,17 +22,31 @@
   </header>
 
   <main id="contenido" class="auth-container">
-    <!-- PRESENTACIÓN: explica VitalFit y lleva al registro -->
+    <!-- PRESENTACIÓN: atrae al cliente y lleva a crear su cuenta -->
     <section class="intro" aria-labelledby="intro-titulo">
-      <h2 id="intro-titulo">Organiza tu entrenamiento desde el primer día</h2>
-      <p>VitalFit te ayuda a seguir tu progreso en el gimnasio según tu objetivo.</p>
+      <p class="intro-etiqueta">VitalFit · tu entrenamiento, organizado</p>
+      <h2 id="intro-titulo">Entrena con un plan hecho para tu objetivo</h2>
+      <p class="intro-lead">Registra tus series, sigue tu progreso y entrena con datos reales, no con suposiciones.</p>
+
+      <h3 class="intro-subtitulo">Cómo empezar en 3 pasos</h3>
+      <ol class="pasos">
+        <li><strong>Crea tu cuenta</strong> con tu correo y una contraseña.</li>
+        <li><strong>Cuéntanos tu perfil:</strong> peso, estatura y objetivo.</li>
+        <li><strong>Elige ejercicios</strong> y registra tus series en cada sesión.</li>
+      </ol>
+
       <ul class="beneficios">
-        <li><strong>Elige tu objetivo:</strong> ganancia muscular, pérdida de grasa o resistencia y cardio.</li>
+        <li><strong>Objetivo claro:</strong> ganancia muscular, pérdida de grasa o resistencia y cardio.</li>
         <li><strong>Catálogo de ejercicios y rutinas:</strong> encuentra lo que quieres entrenar hoy.</li>
-        <li><strong>Registro de series:</strong> anota peso y repeticiones para ver cómo avanzas.</li>
+        <li><strong>Historial de series:</strong> peso y repeticiones de cada ejercicio, para ver cómo avanzas.</li>
       </ul>
+
+      <div class="intro-acciones">
+        <button type="button" id="btn-hero-registro" class="btn btn-primary">Crear mi cuenta</button>
+        <button type="button" id="btn-hero-login" class="btn btn-outline">Ya tengo cuenta</button>
+      </div>
+
       <p class="help">Solo pedimos los datos necesarios para tu entrenamiento. Si eres menor de 18 años, tu padre, madre o tutor debe autorizar tu cuenta.</p>
-      <button type="button" id="btn-hero-registro" class="btn btn-primary">Crear mi cuenta</button>
     </section>
 
     <section class="auth-card" aria-live="polite">

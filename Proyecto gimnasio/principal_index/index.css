@@ -75,6 +75,14 @@ body {
 .beneficios li { padding-left: 12px; border-left: 4px solid var(--verde-oscuro); }
 .intro .help { margin: 0 0 16px; }
 
+.intro-etiqueta { margin: 0 0 8px; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--verde-oscuro); }
+.intro-lead { font-size: 1.05rem; }
+.intro-subtitulo { font-size: 1.05rem; margin: 0 0 8px; color: var(--texto); }
+.pasos { margin: 0 0 20px; padding-left: 22px; display: grid; gap: 8px; color: var(--texto); }
+.pasos li::marker { color: var(--verde-oscuro); font-weight: 700; }
+.intro-acciones { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 16px; }
+.intro-acciones .btn { flex: 1 1 180px; }
+
 @media (min-width: 900px) {
   .auth-container {
     display: grid;
