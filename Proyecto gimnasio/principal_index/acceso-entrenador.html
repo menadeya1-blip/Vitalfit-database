@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="paginas.css">
+  <link rel="stylesheet" href="ejercicio.css">
+  <title>Acceso de entrenador | VitalFit</title>
+</head>
+<body data-page="acceso-entrenador">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="navbar-netflix">
+    <div class="logo"><span aria-hidden="true">⚡</span> VITAL<span>FIT</span></div>
+    <button class="menu-hamburguesa" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-principal">&#9776;</button>
+    <nav class="nav-menu" id="menu-principal" aria-label="Principal">
+      <a href="ejercicio.html">Inicio</a>
+      <a href="rutinas.html">Rutinas GYM</a>
+      <a href="entrenamiento.html">Mis series</a>
+      <a href="mi-lista.html">Mi Lista</a>
+      <a href="perfil.html">Perfil</a>
+      <a href="entrenador.html">Entrenador</a>
+    </nav>
+    <div class="user-profile">
+      <a href="index.html" class="user-avatar" title="Cerrar sesión" aria-label="Cerrar sesión" style="text-decoration: none; color: inherit;">VF</a>
+    </div>
+  </header>
+
+  <main id="contenido" class="pagina">
+    <h1>Acceso de entrenador</h1>
+    <p class="vf-demo" role="note">Demostración: las cuentas de entrenador se guardan solo en este navegador.</p>
+    <p id="estado" role="status" hidden></p>
+
+    <section class="tarjeta" aria-labelledby="t-login">
+      <h2 id="t-login">Iniciar sesión</h2>
+      <form id="formLoginEntrenador" novalidate>
+        <label for="loginCorreo">Correo electrónico</label>
+        <input id="loginCorreo" name="correo" type="email" maxlength="100" required autocomplete="username">
+
+        <label for="loginClave">Contraseña</label>
+        <input id="loginClave" name="clave" type="password" required autocomplete="current-password">
+
+        <button type="submit" class="btn">Entrar</button>
+      </form>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="t-registro">
+      <h2 id="t-registro">Crear cuenta de entrenador</h2>
+      <form id="formRegistroEntrenador" novalidate>
+        <label for="regNombre">Nombre completo</label>
+        <input id="regNombre" name="nombre" type="text" maxlength="100" required autocomplete="name">
+
+        <label for="regCorreo">Correo electrónico</label>
+        <input id="regCorreo" name="correo" type="email" maxlength="100" required autocomplete="email">
+
+        <label for="regClave">Contraseña</label>
+        <input id="regClave" name="clave" type="password" minlength="8" maxlength="72" required autocomplete="new-password" aria-describedby="regAyuda">
+        <p id="regAyuda" class="help">Mínimo 8 caracteres.</p>
+
+        <label for="regEspecialidad">Especialidad (opcional)</label>
+        <input id="regEspecialidad" name="especialidad" type="text" maxlength="100" placeholder="Por ejemplo: fuerza, cardio o yoga">
+
+        <button type="submit" class="btn">Crear cuenta</button>
+      </form>
+    </section>
+
+    <p><a href="index.html">Volver al inicio de clientes</a></p>
+  </main>
+  <script src="../javascript/api.js" defer></script>
+  <script src="../javascript/api.js" defer></script>
+  <script src="../javascript/demo.js" defer></script>
+</body>
+</html>

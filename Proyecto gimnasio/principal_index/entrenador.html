@@ -29,6 +29,12 @@
   </header>
 
   <main id="contenido" class="pagina">
+    <section id="bloqueoEntrenador" class="tarjeta" aria-labelledby="t-bloqueo" hidden>
+      <h2 id="t-bloqueo">Solo para entrenadores</h2>
+      <p>Esta sección es para entrenadores. Si eres cliente, usa Inicio o Perfil.</p>
+      <p><a class="btn btn-primary" href="acceso-entrenador.html">Iniciar sesión o crear cuenta de entrenador</a></p>
+    </section>
+    <div id="contenidoEntrenador">
     <h1>Perfil de entrenador</h1>
     <p class="vf-demo" role="note">Demostración: estos datos se guardan solo en este navegador y no se envían al servidor.</p>
     <p id="estado" role="status" hidden></p>
@@ -60,6 +66,7 @@
       <p id="sinClientes" class="help" hidden>Todavía no tienes clientes asignados.</p>
       <ul id="listaClientes" class="lista"></ul>
     </section>
+    </div>
   </main>
   <script src="../javascript/api.js" defer></script>
   <script src="../javascript/demo.js" defer></script>

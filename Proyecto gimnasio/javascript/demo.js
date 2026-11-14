@@ -10,9 +10,7 @@
     favoritos: 'vitalfit_favoritos',
     series: 'vitalfit_series',
     rutinas: 'vitalfit_rutinas',
-    perfil: 'vitalfit_perfil',
-    entrenador: 'vitalfit_entrenador',
-    clientesEntrenador: 'vitalfit_clientes_entrenador'
+    perfil: 'vitalfit_perfil'
   };
 
   var EJERCICIOS = [
@@ -446,17 +444,32 @@
     return '$' + Number(valor).toLocaleString('es-CO') + ' COP';
   }
 
+  function claveClientes(entrenadorId) {
+    return 'vitalfit_clientes_entrenador_' + entrenadorId;
+  }
+
   function iniciarEntrenador() {
+    var contenido = document.getElementById('contenidoEntrenador');
+    var bloqueo = document.getElementById('bloqueoEntrenador');
+
+    var eid = null;
+    try { eid = sessionStorage.getItem('vitalfit_entrenador_id'); } catch (e) { eid = null; }
+    var cuenta = eid ? leer('vitalfit_entrenadores', []).find(function (e) { return String(e.id) === String(eid); }) : null;
+
+    // Solo un entrenador con sesión puede ver esta página
+    if (!cuenta) {
+      contenido.hidden = true;
+      bloqueo.hidden = false;
+      return;
+    }
+
     var formDatos = document.getElementById('formEntrenador');
     var formCliente = document.getElementById('formCliente');
     var lista = document.getElementById('listaClientes');
     var sinClientes = document.getElementById('sinClientes');
 
-    var datos = leer(CLAVES.entrenador, null);
-    if (datos) {
-      formDatos.elements.namedItem('nombre').value = datos.nombre;
-      formDatos.elements.namedItem('especialidad').value = datos.especialidad || '';
-    }
+    formDatos.elements.namedItem('nombre').value = cuenta.fullName;
+    formDatos.elements.namedItem('especialidad').value = cuenta.specialty || '';
 
     formDatos.addEventListener('submit', function (evento) {
       evento.preventDefault();
@@ -465,18 +478,25 @@
         mostrarEstado('El nombre es obligatorio.', 'error');
         return;
       }
-      guardar(CLAVES.entrenador, {
-        nombre: nombre,
-        especialidad: formDatos.elements.namedItem('especialidad').value.trim()
-      });
+      var cuentas = leer('vitalfit_entrenadores', []);
+      var actual = cuentas.find(function (e) { return String(e.id) === String(cuenta.id); });
+      if (actual) {
+        actual.fullName = nombre;
+        actual.specialty = formDatos.elements.namedItem('especialidad').value.trim();
+        guardar('vitalfit_entrenadores', cuentas);
+        cuenta = actual;
+      }
       mostrarEstado('Datos del entrenador guardados.', 'ok');
     });
 
+    function clientes() { return leer(claveClientes(cuenta.id), []); }
+    function guardarClientes(lista) { guardar(claveClientes(cuenta.id), lista); }
+
     function pintar() {
-      var clientes = leer(CLAVES.clientesEntrenador, []);
+      var lista_ = clientes();
       lista.replaceChildren();
-      sinClientes.hidden = clientes.length > 0;
-      clientes.forEach(function (cliente) {
+      sinClientes.hidden = lista_.length > 0;
+      lista_.forEach(function (cliente) {
         var li = document.createElement('li');
         var texto = document.createElement('span');
         texto.textContent = cliente.nombre + ' · ' + cliente.correo + ' · ' + formatearPrecio(cliente.precio) + ' por entrenamiento';
@@ -496,23 +516,23 @@
       var correo = formCliente.elements.namedItem('correo').value.trim().toLowerCase();
       var precio = Number(formCliente.elements.namedItem('precio').value);
 
-      var cuenta = leer('vitalfit_usuarios', []).find(function (u) { return u.email === correo; });
-      if (!cuenta) {
-        mostrarEstado('No existe una cuenta registrada con ese correo.', 'error');
+      var cliente = leer('vitalfit_usuarios', []).find(function (u) { return u.email === correo; });
+      if (!cliente) {
+        mostrarEstado('No existe una cuenta de cliente con ese correo.', 'error');
         return;
       }
       if (!Number.isInteger(precio) || precio < 0) {
         mostrarEstado('El precio debe ser un número entero mayor o igual a 0.', 'error');
         return;
       }
-      var clientes = leer(CLAVES.clientesEntrenador, []);
-      if (clientes.some(function (c) { return c.correo === correo; })) {
+      var mis = clientes();
+      if (mis.some(function (c) { return c.correo === correo; })) {
         mostrarEstado('Ese cliente ya está en tu lista.', 'error');
         return;
       }
 
-      clientes.push({ correo: correo, nombre: cuenta.fullName, precio: precio });
-      guardar(CLAVES.clientesEntrenador, clientes);
+      mis.push({ correo: correo, nombre: cliente.fullName, precio: precio });
+      guardarClientes(mis);
       formCliente.reset();
       pintar();
       mostrarEstado('Cliente agregado.', 'ok');
@@ -523,14 +543,45 @@
       if (!boton) return;
       if (!window.confirm('¿Quitar a este cliente de tu lista?')) return;
       var correo = boton.dataset.correo;
-      guardar(CLAVES.clientesEntrenador, leer(CLAVES.clientesEntrenador, []).filter(function (c) {
-        return c.correo !== correo;
-      }));
+      guardarClientes(clientes().filter(function (c) { return c.correo !== correo; }));
       pintar();
       mostrarEstado('Cliente quitado de tu lista.', 'ok');
     });
 
     pintar();
+  }
+
+  // ---------- Acceso de entrenador (acceso-entrenador.html) ----------
+  function iniciarAccesoEntrenador() {
+    var formLogin = document.getElementById('formLoginEntrenador');
+    var formRegistro = document.getElementById('formRegistroEntrenador');
+
+    function entrar(entrenador) {
+      try { sessionStorage.setItem('vitalfit_entrenador_id', String(entrenador.id)); } catch (e) { /* sin almacenamiento */ }
+      window.location.href = 'entrenador.html';
+    }
+
+    formLogin.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      window.VitalfitApi.loginTrainer({
+        email: formLogin.elements.namedItem('correo').value,
+        password: formLogin.elements.namedItem('clave').value
+      }).then(entrar).catch(function (err) {
+        mostrarEstado(err.message, 'error');
+      });
+    });
+
+    formRegistro.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      window.VitalfitApi.registerTrainer({
+        fullName: formRegistro.elements.namedItem('nombre').value,
+        email: formRegistro.elements.namedItem('correo').value,
+        password: formRegistro.elements.namedItem('clave').value,
+        specialty: formRegistro.elements.namedItem('especialidad').value
+      }).then(entrar).catch(function (err) {
+        mostrarEstado(err.message, 'error');
+      });
+    });
   }
 
   // ---------- Menú hamburguesa (celular y tablet) ----------
@@ -555,6 +606,7 @@
     if (pagina === 'perfil') iniciarPerfil();
     if (pagina === 'entrenamiento') iniciarEntrenamiento();
     if (pagina === 'entrenador') iniciarEntrenador();
+    if (pagina === 'acceso-entrenador') iniciarAccesoEntrenador();
     mostrarUsuario();
   });
 })();

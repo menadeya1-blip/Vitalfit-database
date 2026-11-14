@@ -202,12 +202,73 @@
     return datosPublicos(usuario);
   }
 
+  var CLAVE_ENTRENADORES = 'vitalfit_entrenadores';
+
+  function leerEntrenadores() {
+    try {
+      var valor = JSON.parse(localStorage.getItem(CLAVE_ENTRENADORES));
+      return Array.isArray(valor) ? valor : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function guardarEntrenadores(lista) {
+    try {
+      localStorage.setItem(CLAVE_ENTRENADORES, JSON.stringify(lista));
+    } catch (e) {
+      throw errorConEstado(0, 'No se pudo guardar en este navegador.');
+    }
+  }
+
+  function publicoEntrenador(e) {
+    return { id: e.id, fullName: e.fullName, email: e.email, specialty: e.specialty || '' };
+  }
+
+  async function registerTrainer(datos) {
+    var nombre = String(datos.fullName || '').trim();
+    if (!nombre) throw errorConEstado(400, 'El nombre es obligatorio.');
+    var correo = normalizarCorreo(datos.email);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) throw errorConEstado(400, 'El correo no es válido.');
+    if (!datos.password || datos.password.length < 8) {
+      throw errorConEstado(400, 'La contraseña debe tener al menos 8 caracteres.');
+    }
+
+    var lista = leerEntrenadores();
+    if (lista.some(function (e) { return e.email === correo; })) {
+      throw errorConEstado(409, 'Ya existe un entrenador con ese correo.');
+    }
+
+    var nuevo = {
+      id: lista.reduce(function (max, e) { return Math.max(max, e.id); }, 0) + 1,
+      fullName: nombre,
+      email: correo,
+      passwordHash: await cifrar(datos.password),
+      specialty: String(datos.specialty || '').trim()
+    };
+    lista.push(nuevo);
+    guardarEntrenadores(lista);
+    return publicoEntrenador(nuevo);
+  }
+
+  async function loginTrainer(datos) {
+    var correo = normalizarCorreo(datos.email);
+    var entrenador = leerEntrenadores().find(function (e) { return e.email === correo; });
+    var hash = entrenador ? await cifrar(datos.password || '') : null;
+    if (!entrenador || entrenador.passwordHash !== hash) {
+      throw errorConEstado(401, 'Correo o contraseña incorrectos.');
+    }
+    return publicoEntrenador(entrenador);
+  }
+
   window.VitalfitApi = {
     register: register,
     login: login,
     updateOnboarding: updateOnboarding,
     deleteAccount: deleteAccount,
     getAccount: getAccount,
-    updateAccount: updateAccount
+    updateAccount: updateAccount,
+    registerTrainer: registerTrainer,
+    loginTrainer: loginTrainer
   };
 })();
