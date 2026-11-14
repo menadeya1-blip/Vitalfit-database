@@ -34,20 +34,13 @@
     RESISTENCIA: 'Resistencia'
   };
 
-  // Lectura segura: si el dato está dañado o no hay almacenamiento, devuelve el valor por defecto.
+  // Lectura y escritura seguras (la lógica está en modelos.js)
   function leer(clave, porDefecto) {
-    try {
-      var valor = JSON.parse(localStorage.getItem(clave));
-      return valor === null ? porDefecto : valor;
-    } catch (e) {
-      return porDefecto;
-    }
+    return VitalfitModelos.Almacenamiento.leer(clave, porDefecto);
   }
 
   function guardar(clave, valor) {
-    try {
-      localStorage.setItem(clave, JSON.stringify(valor));
-    } catch (e) {
+    if (!VitalfitModelos.Almacenamiento.guardar(clave, valor)) {
       mostrarEstado('No se pudo guardar en este navegador.', 'error');
     }
   }
@@ -319,14 +312,7 @@
   }
 
   function validarSerie(pesoTexto, repsTexto) {
-    var peso = Number(pesoTexto);
-    var reps = Number(repsTexto);
-    if (pesoTexto.trim() === '' || isNaN(peso)) return 'El peso debe ser un número.';
-    if (peso < 0) return 'El peso no puede ser negativo.';
-    if (repsTexto.trim() === '' || !Number.isInteger(reps) || reps < 1) {
-      return 'Las repeticiones deben ser un número entero de al menos 1.';
-    }
-    return null;
+    return VitalfitModelos.Serie.validar(pesoTexto, repsTexto);
   }
 
   function iniciarEntrenamiento() {
@@ -390,7 +376,7 @@
       }
 
       var series = leer(CLAVES.series, []);
-      series.push({ ejercicio: select.value, peso: Number(pesoCampo.value), reps: Number(repsCampo.value) });
+      series.push(new VitalfitModelos.Serie(select.value, pesoCampo.value, repsCampo.value).aObjeto());
       guardar(CLAVES.series, series);
 
       pesoCampo.value = '';
@@ -440,24 +426,16 @@
   }
 
   // ---------- Entrenador (entrenador.html) ----------
-  function formatearPrecio(valor) {
-    return '$' + Number(valor).toLocaleString('es-CO') + ' COP';
-  }
-
-  function claveClientes(entrenadorId) {
-    return 'vitalfit_clientes_entrenador_' + entrenadorId;
-  }
-
   function iniciarEntrenador() {
     var contenido = document.getElementById('contenidoEntrenador');
     var bloqueo = document.getElementById('bloqueoEntrenador');
 
     var eid = null;
     try { eid = sessionStorage.getItem('vitalfit_entrenador_id'); } catch (e) { eid = null; }
-    var cuenta = eid ? leer('vitalfit_entrenadores', []).find(function (e) { return String(e.id) === String(eid); }) : null;
+    var entrenador = eid ? VitalfitModelos.Entrenador.buscarPorId(eid) : null;
 
     // Solo un entrenador con sesión puede ver esta página
-    if (!cuenta) {
+    if (!entrenador) {
       contenido.hidden = true;
       bloqueo.hidden = false;
       return;
@@ -468,8 +446,8 @@
     var lista = document.getElementById('listaClientes');
     var sinClientes = document.getElementById('sinClientes');
 
-    formDatos.elements.namedItem('nombre').value = cuenta.fullName;
-    formDatos.elements.namedItem('especialidad').value = cuenta.specialty || '';
+    formDatos.elements.namedItem('nombre').value = entrenador.fullName;
+    formDatos.elements.namedItem('especialidad').value = entrenador.specialty;
 
     formDatos.addEventListener('submit', function (evento) {
       evento.preventDefault();
@@ -478,28 +456,22 @@
         mostrarEstado('El nombre es obligatorio.', 'error');
         return;
       }
-      var cuentas = leer('vitalfit_entrenadores', []);
-      var actual = cuentas.find(function (e) { return String(e.id) === String(cuenta.id); });
-      if (actual) {
-        actual.fullName = nombre;
-        actual.specialty = formDatos.elements.namedItem('especialidad').value.trim();
-        guardar('vitalfit_entrenadores', cuentas);
-        cuenta = actual;
+      var especialidad = formDatos.elements.namedItem('especialidad').value.trim();
+      if (entrenador.guardarDatos(nombre, especialidad)) {
+        mostrarEstado('Datos del entrenador guardados.', 'ok');
+      } else {
+        mostrarEstado('No se pudieron guardar los datos en este navegador.', 'error');
       }
-      mostrarEstado('Datos del entrenador guardados.', 'ok');
     });
 
-    function clientes() { return leer(claveClientes(cuenta.id), []); }
-    function guardarClientes(lista) { guardar(claveClientes(cuenta.id), lista); }
-
     function pintar() {
-      var lista_ = clientes();
+      var clientes = entrenador.clientes();
       lista.replaceChildren();
-      sinClientes.hidden = lista_.length > 0;
-      lista_.forEach(function (cliente) {
+      sinClientes.hidden = clientes.length > 0;
+      clientes.forEach(function (cliente) {
         var li = document.createElement('li');
         var texto = document.createElement('span');
-        texto.textContent = cliente.nombre + ' · ' + cliente.correo + ' · ' + formatearPrecio(cliente.precio) + ' por entrenamiento';
+        texto.textContent = cliente.descripcion();
         var boton = document.createElement('button');
         boton.type = 'button';
         boton.className = 'btn btn-sec';
@@ -515,24 +487,11 @@
       evento.preventDefault();
       var correo = formCliente.elements.namedItem('correo').value.trim().toLowerCase();
       var precio = Number(formCliente.elements.namedItem('precio').value);
-
-      var cliente = leer('vitalfit_usuarios', []).find(function (u) { return u.email === correo; });
-      if (!cliente) {
-        mostrarEstado('No existe una cuenta de cliente con ese correo.', 'error');
+      var resultado = entrenador.agregarCliente(correo, precio);
+      if (resultado.error) {
+        mostrarEstado(resultado.error, 'error');
         return;
       }
-      if (!Number.isInteger(precio) || precio < 0) {
-        mostrarEstado('El precio debe ser un número entero mayor o igual a 0.', 'error');
-        return;
-      }
-      var mis = clientes();
-      if (mis.some(function (c) { return c.correo === correo; })) {
-        mostrarEstado('Ese cliente ya está en tu lista.', 'error');
-        return;
-      }
-
-      mis.push({ correo: correo, nombre: cliente.fullName, precio: precio });
-      guardarClientes(mis);
       formCliente.reset();
       pintar();
       mostrarEstado('Cliente agregado.', 'ok');
@@ -542,8 +501,7 @@
       var boton = evento.target.closest('button[data-correo]');
       if (!boton) return;
       if (!window.confirm('¿Quitar a este cliente de tu lista?')) return;
-      var correo = boton.dataset.correo;
-      guardarClientes(clientes().filter(function (c) { return c.correo !== correo; }));
+      entrenador.quitarCliente(boton.dataset.correo);
       pintar();
       mostrarEstado('Cliente quitado de tu lista.', 'ok');
     });
