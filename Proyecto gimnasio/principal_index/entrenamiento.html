@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="paginas.css">
+  <link rel="stylesheet" href="ejercicio.css">
+  <title>Mis series | VitalFit</title>
+</head>
+<body data-page="entrenamiento">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="navbar-netflix">
+    <div class="logo"><span aria-hidden="true">⚡</span> VITAL<span>FIT</span></div>
+    <button class="menu-hamburguesa" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-principal">&#9776;</button>
+    <nav class="nav-menu" id="menu-principal" aria-label="Principal">
+      <a href="ejercicio.html">Inicio</a>
+      <a href="rutinas.html">Rutinas GYM</a>
+      <a href="entrenamiento.html">Mis series</a>
+      <a href="mi-lista.html">Mi Lista</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+    <div class="user-profile">
+      <a href="index.html" class="user-avatar" title="Cerrar sesión" aria-label="Cerrar sesión" style="text-decoration: none; color: inherit;">VF</a>
+    </div>
+  </header>
+
+  <main id="contenido" class="pagina">
+    <h1>Registrar series</h1>
+    <p class="vf-demo" role="note">Demostración: estos datos se guardan solo en este navegador y no se envían al servidor.</p>
+    <p id="estado" role="status" hidden></p>
+
+    <section class="tarjeta" aria-labelledby="t-nueva">
+      <h2 id="t-nueva">Nueva serie</h2>
+      <form id="formSerie" novalidate>
+        <label for="ejercicio">Ejercicio</label>
+        <select id="ejercicio" name="ejercicio"></select>
+
+        <label for="peso">Peso (kg)</label>
+        <input id="peso" name="peso" type="number" step="0.5" min="0" inputmode="decimal" placeholder="Ej: 40">
+
+        <label for="reps">Repeticiones</label>
+        <input id="reps" name="reps" type="number" step="1" min="1" inputmode="numeric" placeholder="Ej: 10">
+
+        <button type="submit" class="btn">Guardar serie</button>
+      </form>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="t-lista">
+      <h2 id="t-lista">Series registradas</h2>
+      <p id="resumenSeries" class="vacio"></p>
+      <p id="seriesVacio" class="vacio">Todavía no hay series. Agrega la primera con el formulario de arriba.</p>
+      <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Serie</th><th scope="col">Ejercicio</th><th scope="col">Peso (kg)</th><th scope="col">Reps</th><th scope="col"><span class="sr-solo">Acción</span></th></tr>
+        </thead>
+        <tbody id="cuerpoSeries"></tbody>
+      </table>
+      </div>
+    </section>
+  </main>
+  <script src="../javascript/demo.js" defer></script>
+</body>
+</html>

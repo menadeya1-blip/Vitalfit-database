@@ -42,6 +42,7 @@
     // Navegación entre vistas
     $('btn-show-register').addEventListener('click', () => mostrarVista('register-container'));
     $('btn-show-login').addEventListener('click', () => mostrarVista('login-container'));
+    $('btn-hero-registro').addEventListener('click', () => mostrarVista('register-container'));
     $('btn-pending-login').addEventListener('click', () => mostrarVista('login-container'));
 
     // Enlaces legales: todavía no existen las páginas (pendientes de revisión legal)
