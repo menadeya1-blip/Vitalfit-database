@@ -45,3 +45,35 @@ th { background: var(--verde-claro); color: var(--verde-oscuro); }
 ul.lista { list-style: none; padding: 0; margin: 0; }
 ul.lista li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--borde); background: #fff; }
 ul.lista li small { display: block; color: var(--texto-suave); }
+
+/* ===== Responsive (mismas etapas que &rys Banco: 1024, 900, 768, 600 y 380 px) ===== */
+/* Se usa .navbar-netflix .nav-menu para ganar a la regla de ejercicio.css */
+.navbar-netflix { position: relative; }
+.navbar-netflix .menu-hamburguesa { display: none; background: none; border: none; color: var(--blanco); font-size: 1.8rem; line-height: 1; cursor: pointer; padding: 0.3rem 0.5rem; }
+
+.tabla-wrap { overflow-x: auto; }
+
+@media (max-width: 768px) {
+  .navbar-netflix .menu-hamburguesa { display: block; }
+  .navbar-netflix .nav-menu {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; gap: 0.8rem; padding: 1rem;
+    background: var(--verde-oscuro); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25); z-index: 100;
+  }
+  .navbar-netflix .nav-menu.abierto { display: flex; }
+  .pagina { padding: 1rem; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.3rem; }
+}
+
+@media (max-width: 600px) {
+  ul.lista li { flex-direction: column; align-items: flex-start; }
+  .btn { width: 100%; }
+  input, select { max-width: none; }
+}
+
+@media (max-width: 380px) {
+  .pagina { padding: 0.8rem; }
+  .tarjeta { padding: 12px; }
+}

@@ -358,9 +358,21 @@
     pintar();
   }
 
+  // ---------- Menú hamburguesa (celular y tablet) ----------
+  function iniciarMenu() {
+    var boton = document.querySelector('.menu-hamburguesa');
+    var menu = document.querySelector('.nav-menu');
+    if (!boton || !menu) return;
+    boton.addEventListener('click', function () {
+      var abierto = menu.classList.toggle('abierto');
+      boton.setAttribute('aria-expanded', String(abierto));
+    });
+  }
+
   // ---------- Arranque ----------
   document.addEventListener('DOMContentLoaded', function () {
     marcarNavegacion();
+    iniciarMenu();
     var pagina = document.body.dataset.page;
     if (pagina === 'catalogo') iniciarCatalogo();
     if (pagina === 'mi-lista') iniciarMiLista();

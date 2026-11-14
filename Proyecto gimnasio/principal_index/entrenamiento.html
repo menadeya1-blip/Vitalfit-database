@@ -14,7 +14,8 @@
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <header class="navbar-netflix">
     <div class="logo"><span aria-hidden="true">⚡</span> VITAL<span>FIT</span></div>
-    <nav class="nav-menu" aria-label="Principal">
+    <button class="menu-hamburguesa" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-principal">&#9776;</button>
+    <nav class="nav-menu" id="menu-principal" aria-label="Principal">
       <a href="ejercicio.html">Inicio</a>
       <a href="rutinas.html">Rutinas GYM</a>
       <a href="entrenamiento.html">Mis series</a>
@@ -51,12 +52,14 @@
       <h2 id="t-lista">Series registradas</h2>
       <p id="resumenSeries" class="vacio"></p>
       <p id="seriesVacio" class="vacio">Todavía no hay series. Agrega la primera con el formulario de arriba.</p>
+      <div class="tabla-wrap">
       <table>
         <thead>
           <tr><th scope="col">Serie</th><th scope="col">Ejercicio</th><th scope="col">Peso (kg)</th><th scope="col">Reps</th><th scope="col"><span class="sr-solo">Acción</span></th></tr>
         </thead>
         <tbody id="cuerpoSeries"></tbody>
       </table>
+      </div>
     </section>
   </main>
   <script src="../javascript/demo.js" defer></script>
