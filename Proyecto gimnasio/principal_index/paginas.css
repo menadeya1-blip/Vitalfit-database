@@ -77,3 +77,5 @@ ul.lista li small { display: block; color: var(--texto-suave); }
   .pagina { padding: 0.8rem; }
   .tarjeta { padding: 12px; }
 }
+
+.usuario-nombre { color: var(--blanco); font-weight: 600; margin-right: 10px; }

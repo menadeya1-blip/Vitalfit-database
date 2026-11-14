@@ -10,7 +10,9 @@
     favoritos: 'vitalfit_favoritos',
     series: 'vitalfit_series',
     rutinas: 'vitalfit_rutinas',
-    perfil: 'vitalfit_perfil'
+    perfil: 'vitalfit_perfil',
+    entrenador: 'vitalfit_entrenador',
+    clientesEntrenador: 'vitalfit_clientes_entrenador'
   };
 
   var EJERCICIOS = [
@@ -415,6 +417,122 @@
     pintar();
   }
 
+  // ---------- Nombre del usuario en la barra ----------
+  function iniciales(nombre) {
+    return String(nombre).trim().split(/\s+/).slice(0, 2).map(function (p) {
+      return p.charAt(0).toUpperCase();
+    }).join('');
+  }
+
+  function mostrarUsuario() {
+    var id = null;
+    try { id = sessionStorage.getItem('vitalfit_user_id'); } catch (e) { id = null; }
+    if (!id) return;
+
+    var usuario = leer('vitalfit_usuarios', []).find(function (u) { return String(u.id) === String(id); });
+    var perfil = document.querySelector('.user-profile');
+    if (!usuario || !perfil) return;
+
+    var avatar = perfil.querySelector('.user-avatar');
+    var nombre = document.createElement('span');
+    nombre.className = 'usuario-nombre';
+    nombre.textContent = usuario.fullName;
+    perfil.insertBefore(nombre, avatar);
+    if (avatar) avatar.textContent = iniciales(usuario.fullName);
+  }
+
+  // ---------- Entrenador (entrenador.html) ----------
+  function formatearPrecio(valor) {
+    return '$' + Number(valor).toLocaleString('es-CO') + ' COP';
+  }
+
+  function iniciarEntrenador() {
+    var formDatos = document.getElementById('formEntrenador');
+    var formCliente = document.getElementById('formCliente');
+    var lista = document.getElementById('listaClientes');
+    var sinClientes = document.getElementById('sinClientes');
+
+    var datos = leer(CLAVES.entrenador, null);
+    if (datos) {
+      formDatos.elements.namedItem('nombre').value = datos.nombre;
+      formDatos.elements.namedItem('especialidad').value = datos.especialidad || '';
+    }
+
+    formDatos.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      var nombre = formDatos.elements.namedItem('nombre').value.trim();
+      if (!nombre) {
+        mostrarEstado('El nombre es obligatorio.', 'error');
+        return;
+      }
+      guardar(CLAVES.entrenador, {
+        nombre: nombre,
+        especialidad: formDatos.elements.namedItem('especialidad').value.trim()
+      });
+      mostrarEstado('Datos del entrenador guardados.', 'ok');
+    });
+
+    function pintar() {
+      var clientes = leer(CLAVES.clientesEntrenador, []);
+      lista.replaceChildren();
+      sinClientes.hidden = clientes.length > 0;
+      clientes.forEach(function (cliente) {
+        var li = document.createElement('li');
+        var texto = document.createElement('span');
+        texto.textContent = cliente.nombre + ' · ' + cliente.correo + ' · ' + formatearPrecio(cliente.precio) + ' por entrenamiento';
+        var boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'btn btn-sec';
+        boton.dataset.correo = cliente.correo;
+        boton.textContent = 'Quitar';
+        boton.setAttribute('aria-label', 'Quitar a ' + cliente.nombre + ' de mi lista');
+        li.append(texto, boton);
+        lista.append(li);
+      });
+    }
+
+    formCliente.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      var correo = formCliente.elements.namedItem('correo').value.trim().toLowerCase();
+      var precio = Number(formCliente.elements.namedItem('precio').value);
+
+      var cuenta = leer('vitalfit_usuarios', []).find(function (u) { return u.email === correo; });
+      if (!cuenta) {
+        mostrarEstado('No existe una cuenta registrada con ese correo.', 'error');
+        return;
+      }
+      if (!Number.isInteger(precio) || precio < 0) {
+        mostrarEstado('El precio debe ser un número entero mayor o igual a 0.', 'error');
+        return;
+      }
+      var clientes = leer(CLAVES.clientesEntrenador, []);
+      if (clientes.some(function (c) { return c.correo === correo; })) {
+        mostrarEstado('Ese cliente ya está en tu lista.', 'error');
+        return;
+      }
+
+      clientes.push({ correo: correo, nombre: cuenta.fullName, precio: precio });
+      guardar(CLAVES.clientesEntrenador, clientes);
+      formCliente.reset();
+      pintar();
+      mostrarEstado('Cliente agregado.', 'ok');
+    });
+
+    lista.addEventListener('click', function (evento) {
+      var boton = evento.target.closest('button[data-correo]');
+      if (!boton) return;
+      if (!window.confirm('¿Quitar a este cliente de tu lista?')) return;
+      var correo = boton.dataset.correo;
+      guardar(CLAVES.clientesEntrenador, leer(CLAVES.clientesEntrenador, []).filter(function (c) {
+        return c.correo !== correo;
+      }));
+      pintar();
+      mostrarEstado('Cliente quitado de tu lista.', 'ok');
+    });
+
+    pintar();
+  }
+
   // ---------- Menú hamburguesa (celular y tablet) ----------
   function iniciarMenu() {
     var boton = document.querySelector('.menu-hamburguesa');
@@ -436,5 +554,7 @@
     if (pagina === 'rutinas') iniciarRutinas();
     if (pagina === 'perfil') iniciarPerfil();
     if (pagina === 'entrenamiento') iniciarEntrenamiento();
+    if (pagina === 'entrenador') iniciarEntrenador();
+    mostrarUsuario();
   });
 })();
