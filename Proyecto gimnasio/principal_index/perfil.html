@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="paginas.css">
+  <link rel="stylesheet" href="ejercicio.css">
+  <title>Mi perfil | VitalFit</title>
+</head>
+<body data-page="perfil">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="navbar-netflix">
+    <div class="logo"><span aria-hidden="true">⚡</span> VITAL<span>FIT</span></div>
+    <nav class="nav-menu" aria-label="Principal">
+      <a href="ejercicio.html">Inicio</a>
+      <a href="rutinas.html">Rutinas GYM</a>
+      <a href="entrenamiento.html">Mis series</a>
+      <a href="mi-lista.html">Mi Lista</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+    <div class="user-profile">
+      <a href="index.html" class="user-avatar" title="Cerrar sesión" aria-label="Cerrar sesión" style="text-decoration: none; color: inherit;">VF</a>
+    </div>
+  </header>
+
+  <main id="contenido" class="pagina">
+    <h1>Mi perfil</h1>
+    <p class="vf-demo" role="note">Demostración: estos datos se guardan solo en este navegador y no se envían al servidor.</p>
+    <p id="estado" role="status" hidden></p>
+
+    <section class="tarjeta" aria-labelledby="t-cuenta">
+      <h2 id="t-cuenta">Cuenta</h2>
+      <p id="perfilUsuario" class="vacio"></p>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="t-datos">
+      <h2 id="t-datos">Datos y objetivo</h2>
+      <form id="formPerfil" novalidate>
+        <label for="objetivo">Objetivo</label>
+        <select id="objetivo" name="objetivo">
+          <option value="PERDIDA_GRASA">Pérdida de grasa</option>
+          <option value="GANANCIA_MUSCULAR">Ganancia muscular</option>
+          <option value="RESISTENCIA">Resistencia</option>
+        </select>
+
+        <label for="peso">Peso (kg)</label>
+        <input id="peso" name="peso" type="number" step="0.1" min="20" max="300" inputmode="decimal">
+
+        <label for="estatura">Estatura (cm)</label>
+        <input id="estatura" name="estatura" type="number" min="100" max="250" inputmode="numeric">
+
+        <button type="submit" class="btn">Guardar</button>
+      </form>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="t-resumen">
+      <h2 id="t-resumen">Resumen</h2>
+      <ul id="perfilResumen" class="lista"></ul>
+    </section>
+  </main>
+  <script src="../javascript/demo.js" defer></script>
+</body>
+</html>

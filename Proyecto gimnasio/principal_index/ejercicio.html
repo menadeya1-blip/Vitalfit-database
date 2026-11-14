@@ -7,9 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="paginas.css">
   <link rel="stylesheet" href="ejercicio.css">
 </head>
-<body>
+<body data-page="catalogo">
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
   <!-- Header / Navbar Netflix -->
@@ -17,9 +18,10 @@
     <div class="logo"><span aria-hidden="true">⚡</span> VITAL<span>FIT</span></div>
     <nav class="nav-menu">
       <a href="ejercicio.html" class="active">Inicio</a>
-      <a href="#">Rutinas GYM</a>
-      <a href="#">Entrenamiento en Casa</a>
-      <a href="#">Mi Lista</a>
+      <a href="rutinas.html">Rutinas GYM</a>
+      <a href="entrenamiento.html">Mis series</a>
+      <a href="mi-lista.html">Mi Lista</a>
+      <a href="perfil.html">Perfil</a>
     </nav>
     <div class="user-profile">
       <a href="index.html" class="user-avatar" title="Cerrar sesión" aria-label="Cerrar sesión" style="text-decoration: none; color: inherit;">VF</a>
@@ -27,6 +29,9 @@
   </header>
 
   <main id="contenido" class="catalog-container">
+
+    <p class="vf-demo" role="note">Demostración: tu Mi Lista se guarda solo en este navegador y no se envía al servidor.</p>
+    <p id="estado" role="status" hidden></p>
 
     <!-- Fila 1: Ejercicios para Gimnasio (GYM) - Tren Superior -->
     <section class="netflix-row">
@@ -404,5 +409,6 @@
 
   </main>
 
+  <script src="../javascript/demo.js" defer></script>
 </body>
 </html>
