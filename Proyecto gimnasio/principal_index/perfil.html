@@ -87,6 +87,30 @@
       <ul id="perfilResumen" class="lista"></ul>
     </section>
 
+    <section class="tarjeta" aria-labelledby="t-progreso">
+      <h2 id="t-progreso">Progreso de peso</h2>
+      <p id="progresoPeso" class="help">Guarda tu peso para ver tu progreso.</p>
+      <ul id="listaPesos" class="lista"></ul>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="t-historial">
+      <h2 id="t-historial">Historial de entrenamientos</h2>
+      <p id="sinHistorial" class="help" hidden>Todavía no tienes entrenamientos registrados.</p>
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Fecha</th>
+              <th scope="col">Ejercicios</th>
+              <th scope="col">Series</th>
+              <th scope="col">Peso cargado</th>
+            </tr>
+          </thead>
+          <tbody id="historialEntrenos"></tbody>
+        </table>
+      </div>
+    </section>
+
     <section class="tarjeta" aria-labelledby="t-eliminar">
       <h2 id="t-eliminar">Eliminar cuenta</h2>
       <p>Se borran tu cuenta y tus datos de este navegador. No se puede deshacer.</p>
@@ -107,6 +131,8 @@
   <script src="../javascript/models/cuenta.js" defer></script>
   <script src="../javascript/models/cliente.js" defer></script>
   <script src="../javascript/models/entrenador.js" defer></script>
+  <script src="../javascript/models/historial.js" defer></script>
+  <script src="../javascript/models/progreso.js" defer></script>
   <script src="../javascript/demo.js" defer></script>
 </body>
 </html>

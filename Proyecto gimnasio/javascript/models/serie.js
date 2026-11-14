@@ -4,14 +4,28 @@
   window.VitalfitModelos = window.VitalfitModelos || {};
 
   class Serie {
-    constructor(ejercicio, peso, reps) {
+    constructor(ejercicio, peso, reps, fecha) {
       this.ejercicio = ejercicio;
       this.peso = Number(peso);
       this.reps = Number(reps);
+      this.fecha = fecha || Serie.hoy();
+    }
+
+    // Fecha local de hoy en formato AAAA-MM-DD
+    static hoy() {
+      const d = new Date();
+      const mes = String(d.getMonth() + 1).padStart(2, '0');
+      const dia = String(d.getDate()).padStart(2, '0');
+      return d.getFullYear() + '-' + mes + '-' + dia;
+    }
+
+    // Peso cargado en la serie (kg × repeticiones)
+    volumen() {
+      return this.peso * this.reps;
     }
 
     aObjeto() {
-      return { ejercicio: this.ejercicio, peso: this.peso, reps: this.reps };
+      return { ejercicio: this.ejercicio, peso: this.peso, reps: this.reps, fecha: this.fecha };
     }
 
     // Devuelve el mensaje de error, o null si la serie es válida.

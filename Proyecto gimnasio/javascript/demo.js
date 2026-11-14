@@ -290,6 +290,48 @@
       pintarResumen(guardado);
     }
 
+    function fechaLegible(fecha) {
+      if (fecha === 'Sin fecha') return fecha;
+      return new Date(fecha + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function pintarProgreso() {
+      var lista = document.getElementById('listaPesos');
+      document.getElementById('progresoPeso').textContent = VitalfitModelos.Progreso.resumenTexto();
+      var pesos = VitalfitModelos.Progreso.pesos().slice().sort(function (a, b) { return a.fecha < b.fecha ? -1 : 1; });
+      lista.replaceChildren();
+      pesos.forEach(function (registro) {
+        var li = document.createElement('li');
+        li.textContent = fechaLegible(registro.fecha) + ': ' + registro.peso + ' kg';
+        lista.append(li);
+      });
+    }
+
+    function pintarHistorial() {
+      var cuerpo = document.getElementById('historialEntrenos');
+      var sin = document.getElementById('sinHistorial');
+      var filas = VitalfitModelos.Historial.agrupar(leer(CLAVES.series, []));
+      cuerpo.replaceChildren();
+      sin.hidden = filas.length > 0;
+      filas.forEach(function (fila) {
+        var tr = document.createElement('tr');
+        [
+          fechaLegible(fila.fecha),
+          String(fila.ejercicios),
+          String(fila.series),
+          Number(fila.volumen).toLocaleString('es-CO') + ' kg'
+        ].forEach(function (texto) {
+          var td = document.createElement('td');
+          td.textContent = texto;
+          tr.append(td);
+        });
+        cuerpo.append(tr);
+      });
+    }
+
+    pintarProgreso();
+    pintarHistorial();
+
     form.addEventListener('submit', function (evento) {
       evento.preventDefault();
       var peso = Number(form.elements.namedItem('peso').value);
@@ -306,7 +348,9 @@
 
       var datos = { objetivo: form.elements.namedItem('objetivo').value, peso: peso, estatura: estatura };
       guardar(CLAVES.perfil, datos);
+      VitalfitModelos.Progreso.registrarPeso(peso);
       pintarResumen(datos);
+      pintarProgreso();
       mostrarEstado('Datos guardados en este navegador.', 'ok');
     });
   }
